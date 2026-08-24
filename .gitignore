@@ -1,0 +1,7 @@
+# dev / OS cruft — the site itself is committed as static HTML
+node_modules/
+package-lock.json
+.DS_Store
+*.log
+/tmp/
+.cache/
