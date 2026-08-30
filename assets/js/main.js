@@ -29,6 +29,22 @@
     });
   }
 
+  // ---- Header dropdown (touch + keyboard; hover is handled in CSS) ----
+  var ddButtons = Array.prototype.slice.call(document.querySelectorAll(".nav-top"));
+  function closeAllDD(except) {
+    ddButtons.forEach(function (b) { if (b !== except) b.setAttribute("aria-expanded", "false"); });
+  }
+  ddButtons.forEach(function (btn) {
+    btn.addEventListener("click", function (e) {
+      e.preventDefault();
+      var open = btn.getAttribute("aria-expanded") === "true";
+      closeAllDD(btn);
+      btn.setAttribute("aria-expanded", String(!open));
+    });
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeAllDD(null); });
+  document.addEventListener("click", function (e) { if (!e.target.closest(".has-dd")) closeAllDD(null); });
+
   // ---- Scroll reveal ----
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var revealables = Array.prototype.slice.call(document.querySelectorAll("[data-reveal]"));

@@ -31,9 +31,14 @@ _build/
     assets.mjs        inline SVG: logo mark, icons, avatars, monogram tiles, diagrams, map
 assets/               css, js, curated imagery, logos, OG image
 companies/            generated company index + one page per company
-insights/             generated insights index + one page per article
-*.html                generated top-level pages
+news/                 generated newsroom index + one page per announcement/perspective
+*.html                generated top-level pages (group, operating-model, investments,
+                        international, leadership, governance, careers, faq, contact,
+                        group-profile, and the corporate/compliance pages)
 ```
+
+Top navigation uses a "Group" mega-menu (Overview · Operating model · Leadership ·
+Governance · Careers) so the bar stays clean while every corporate section is reachable.
 
 ## Build
 
@@ -63,6 +68,11 @@ defended. Items marked below are **placeholders to finalize before any outreach*
 - **Executives** — real functions and understated, credible bios, but the **names are
   placeholders and the portraits are generated monogram avatars**. Drop real professional
   photographs into `executives[].photo` and real profile URLs into `executives[].linkedin`.
+  Person JSON-LD is emitted for each, so a real LinkedIn URL in `linkedin` immediately wires
+  the people↔organization entity graph (add the LinkedIn company page to `group.sameAs` too).
+- **Board of Directors** — the Governance page shows an independent Non-Executive Chair and
+  independent director seats as *"appointment in progress"*; fill `governance.board.seats`
+  in `content.mjs` with real directors as they are appointed.
 - **Company points of contact** — each operating brand has a named local contact at
   `info@<that-brand-domain>` (`companies[].poc`); swap for the real people.
 - **Metrics** — kept intentionally conservative and dated ("as of August 2026"); only counts

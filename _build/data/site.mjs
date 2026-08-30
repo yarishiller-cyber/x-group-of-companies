@@ -2,15 +2,21 @@
 // site.mjs — navigation, footer structure, and the compliance/legal page bodies.
 // =============================================================================
 
-// Primary navigation (blueprint recommended set).
+// Primary navigation. A "Group" dropdown holds the corporate sub-pages so the
+// top bar stays clean while every section is reachable (mega-menu style, as on
+// real operating-holdco sites). `children` renders as a dropdown.
 export const primaryNav = [
-  { label: "Group",           href: "/group" },
+  { label: "Group", href: "/group", children: [
+      { label: "Overview",        href: "/group",           desc: "Who we are & our thesis" },
+      { label: "Operating model", href: "/operating-model", desc: "How the platform works" },
+      { label: "Leadership",      href: "/leadership",      desc: "The people who run the Group" },
+      { label: "Governance",      href: "/governance",      desc: "Board, committees & policies" },
+      { label: "Careers",         href: "/careers",         desc: "Build a career across the Group" },
+  ] },
   { label: "Companies",       href: "/companies" },
-  { label: "Operating Model", href: "/operating-model" },
   { label: "Investments",     href: "/investments" },
   { label: "International",    href: "/international" },
-  { label: "Leadership",      href: "/leadership" },
-  { label: "Insights",        href: "/insights" },
+  { label: "News",            href: "/news" },
   { label: "Contact",         href: "/contact" },
 ];
 
@@ -21,7 +27,8 @@ export const footerNav = [
       { label: "The Group",       href: "/group" },
       { label: "Operating model", href: "/operating-model" },
       { label: "Leadership",      href: "/leadership" },
-      { label: "Insights",        href: "/insights" },
+      { label: "Governance",      href: "/governance" },
+      { label: "Newsroom",        href: "/news" },
     ],
   },
   {
@@ -43,12 +50,12 @@ export const footerNav = [
     ],
   },
   {
-    heading: "Contact",
+    heading: "Connect",
     links: [
       { label: "Contact the Group",  href: "/contact" },
-      { label: "Business owners",    href: "/contact#acquisitions" },
-      { label: "International",       href: "/contact#international" },
-      { label: "Careers",            href: "/contact#careers" },
+      { label: "Careers",            href: "/careers" },
+      { label: "FAQ",                href: "/faq" },
+      { label: "Media",              href: "/contact#media" },
     ],
   },
 ];

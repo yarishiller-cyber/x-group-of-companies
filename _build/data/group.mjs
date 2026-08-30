@@ -12,7 +12,9 @@ export const group = {
   legalName:   "X Group Holdings Inc.",
   descriptor:  "Canadian operating holding company",
   tagline:     "We build durable businesses.",
+  slogan:      "Local brands. Central operating infrastructure. Disciplined capital allocation.",
   positioning: "A Canadian operating group that owns and supports businesses across essential services and technology.",
+  heritageYear: 2007,   // earliest operating brand (Steveston); the group was formalized in 2026
 
   // The four-sentence core positioning (blueprint close):
   creed: [
@@ -50,8 +52,12 @@ export const group = {
     privacy:       "privacy@xgroupholdings.ca",
   },
 
-  // --- Social (placeholders — set real profile URLs before outreach) ---------
+  // --- Social / entity graph (set real URLs before outreach) -----------------
+  // `sameAs` feeds schema.org so search engines + AI resolve the Group to ONE
+  // confident entity. Add the LinkedIn company page + any registry/Crunchbase
+  // URLs here as they exist; the executives' own profiles link to this page.
   linkedin: "",   // e.g. "https://www.linkedin.com/company/x-group-holdings"
+  sameAs: [],     // e.g. ["https://www.linkedin.com/company/x-group-holdings"]
 
   // Sectors the group operates in today
   sectors: ["Essential Services", "Industrial Field Services", "Technology"],

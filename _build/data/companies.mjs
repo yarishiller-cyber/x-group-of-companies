@@ -48,30 +48,6 @@ export const companies = [
 
   // ----------------------------------------------------------- ESSENTIAL / HOME
   {
-    name: "Door X Garage Services",
-    slug: "door-x-garage-services",
-    legalName: "",
-    relationship: "wholly-owned",
-    relationshipLabel: "Group operating company",
-    category: "Essential Services",
-    geography: ["Greater Vancouver, BC"],
-    website: "https://doorx.ca",
-    domain: "doorx.ca",
-    founded: 2016,
-    tint: "#1f7ae0",
-    monogram: "DX",
-    tagline: "Residential & commercial garage-door service.",
-    short: "The Group's flagship garage-door operation: repair, installation and commercial service across Greater Vancouver, and the proving ground for the Group's field-service operating systems.",
-    long: [
-      "Door X Garage Services is where the Group's operating model was built: recruiting, dispatch, customer acquisition, scheduling and the software that keeps technicians productive. Door X provides residential and commercial garage-door repair and installation across Greater Vancouver.",
-      "The systems developed at Door X — from field tools to centralized customer service — are the template the Group now applies across its other operating brands.",
-    ],
-    poc: { name: "Marcus Lang", role: "General Manager", email: "info@doorx.ca" },
-    metrics: [],
-    featured: true,
-    published: true,
-  },
-  {
     name: "Steveston Garage Doors",
     slug: "steveston-garage-doors",
     legalName: "",
@@ -230,7 +206,7 @@ export const companies = [
     ],
     poc: { name: "Devin Marsh", role: "Dispatch Lead", email: "info@yvrgaragedoorsprings.ca" },
     metrics: [{ label: "Cities served", value: "16" }],
-    featured: false,
+    featured: true,
     published: true,
   },
   {
@@ -334,3 +310,7 @@ export const companies = [
 ];
 
 export const publishedCompanies = companies.filter(c => c.published);
+
+// Derived counts so the fact strip never drifts as brands are added/removed.
+export const operatingBrandsCount = publishedCompanies.filter(c => c.category !== "Technology").length;
+export const sectorCount = new Set(publishedCompanies.map(c => c.category)).size;

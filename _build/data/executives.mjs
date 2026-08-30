@@ -17,11 +17,11 @@ export const executives = [
   {
     name: "Adrian Cole",
     initials: "AC",
-    title: "Managing Director",
+    title: "Managing Director & Chief Executive",
     linkedin: "",
     photo: "",
     areas: ["Capital allocation", "Corporate development", "Operations"],
-    bio: "Adrian Cole is Managing Director of X Group and is responsible for group strategy, capital allocation and corporate development. Adrian has spent more than fifteen years building and operating field-service businesses in British Columbia, with hands-on experience in customer acquisition, service delivery, vendor development and the centralized systems that let small operating brands run lean. At X Group, the focus is on new operating platforms, disciplined acquisitions and the Group's international market-development program.",
+    bio: "Adrian Cole is Managing Director and Chief Executive of X Group and is responsible for group strategy, capital allocation and corporate development. Adrian has spent more than fifteen years building and operating field-service businesses in British Columbia, with hands-on experience in customer acquisition, service delivery, vendor development and the centralized systems that let small operating brands run lean. At X Group, the focus is on new operating platforms, disciplined acquisitions and the Group's international market-development program.",
   },
   {
     name: "Nathan Brar",
@@ -53,20 +53,20 @@ export const executives = [
   {
     name: "Marcus Deng",
     initials: "MD",
-    title: "Head of Technology & AI",
+    title: "Chief Technology Officer",
     linkedin: "",
     photo: "",
     areas: ["Technology", "Data", "Applied AI"],
-    bio: "Marcus Deng leads technology and data for X Group, covering the Group's websites, CRM and dispatch systems, telephony, cybersecurity, analytics and applied AI. Marcus coordinates the Group's technology relationship with Allegro X AI and is responsible for turning operating data from many brands into better scheduling, marketing and decision-making. Background in software engineering and data platforms for service businesses.",
+    bio: "Marcus Deng is Chief Technology Officer of X Group, covering the Group's websites, CRM and dispatch systems, telephony, cybersecurity, analytics and applied AI. Marcus coordinates the Group's technology relationship with Allegro X AI and is responsible for turning operating data from many brands into better scheduling, marketing and decision-making. Background in software engineering and data platforms for service businesses.",
   },
   {
     name: "Priya Sandhu",
     initials: "PS",
-    title: "Head of People",
+    title: "Chief People Officer",
     linkedin: "",
     photo: "",
     areas: ["Recruiting", "Training", "Workforce planning"],
-    bio: "Priya Sandhu is Head of People, responsible for recruiting, onboarding, training, compensation frameworks and workforce planning across the Group. Priya builds the hiring and development systems that let each operating brand add technicians and office staff quickly without rebuilding HR from scratch, and leads the Group's approach to safety culture and WorkSafeBC compliance.",
+    bio: "Priya Sandhu is Chief People Officer, responsible for recruiting, onboarding, training, compensation frameworks and workforce planning across the Group. Priya builds the hiring and development systems that let each operating brand add technicians and office staff quickly without rebuilding HR from scratch, and leads the Group's approach to safety culture and WorkSafeBC compliance.",
   },
   {
     name: "Owen Fraser",

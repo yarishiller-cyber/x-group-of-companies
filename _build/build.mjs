@@ -9,12 +9,16 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { group, contactChannels } from "./data/group.mjs";
-import { companies, publishedCompanies, categories } from "./data/companies.mjs";
+import { companies, publishedCompanies, categories, operatingBrandsCount } from "./data/companies.mjs";
 import { executives } from "./data/executives.mjs";
-import { metrics, capabilities, investmentModes, investmentAudiences, international, insights } from "./data/content.mjs";
+import { metrics, capabilities, investmentModes, investmentAudiences, international,
+         principles, milestones, governance, careers, faqs, newsroom } from "./data/content.mjs";
 import { corporatePages } from "./data/site.mjs";
-import { page, esc, orgGraph, breadcrumb, ASSET_V } from "./lib/layout.mjs";
+import { page, esc, siteGraph, breadcrumb, personSchema, faqSchema, articleSchema, orgRef, ORG_ID, ASSET_V } from "./lib/layout.mjs";
 import { icon, avatar, monogramTile, platformDiagram, capitalFlowDiagram, reachSVG, faviconSVG } from "./lib/assets.mjs";
+
+// Small shared partial: a soft note/callout box.
+const noteBox = (html) => `<p class="note">${html}</p>`;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -121,6 +125,15 @@ function home() {
   </div>
 </section>
 
+<section class="section section--cool">
+  <div class="wrap">
+    ${sectionHead({ eyebrow: "What we believe", title: "Principles we run the Group by", center: true })}
+    <div class="grid grid-3" data-stagger>
+      ${principles.map(p => `<article class="card principle"><div class="p-ico">${icon(p.icon)}</div><h3>${esc(p.title)}</h3><p>${esc(p.body)}</p></article>`).join("")}
+    </div>
+  </div>
+</section>
+
 <section class="section section--alt">
   <div class="wrap">
     ${sectionHead({ eyebrow: "Companies", title: "A portfolio built from operating experience", lead: "Our companies serve homeowners, commercial operators and enterprises in markets where reliability, responsiveness and execution matter." })}
@@ -161,7 +174,22 @@ function home() {
   <div class="wrap">
     ${sectionHead({ eyebrow: "Leadership", title: "Operators you can actually meet", lead: "The Group is run by people who have built and operated field-service businesses in British Columbia." })}
     <div class="exec-strip" data-stagger>${execStrip}</div>
-    <p style="margin-top:1.6rem"><a class="textlink" href="/leadership">Meet the leadership team ${icon("arrow","icon")}</a></p>
+    <p style="margin-top:1.6rem"><a class="textlink" href="/leadership">Meet the leadership team ${icon("arrow","icon")}</a> &nbsp;·&nbsp; <a class="textlink" href="/governance">Board &amp; governance ${icon("arrow","icon")}</a></p>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="wrap">
+    ${sectionHead({ eyebrow: "Newsroom", title: "Latest from X Group" })}
+    <div class="grid grid-3" data-stagger>
+      ${newsroom.slice(0, 3).map(n => `<a class="card news-card" href="/news/${n.slug}">
+        <span class="news-type">${esc(n.type)} · ${esc(n.dateLabel)}</span>
+        <h3>${esc(n.title)}</h3>
+        <p>${esc(n.summary)}</p>
+        <span class="textlink">Read ${icon("arrow","icon-xs")}</span>
+      </a>`).join("")}
+    </div>
+    <p style="margin-top:1.8rem"><a class="btn btn-ghost" href="/news">Visit the newsroom ${icon("arrow","icon")}</a></p>
   </div>
 </section>
 
@@ -183,7 +211,8 @@ ${ctaBand({
   return page({
     title: "Home", path: "/",
     description: `${group.legalName} is a Canadian operating holding company that builds, acquires and supports essential-service and technology businesses. Based in Vancouver, BC.`,
-    jsonld: [orgGraph()],
+    jsonld: [siteGraph()],
+    preloadImage: "/assets/img/hero-field-service.webp",
     main: extra + main,
   });
 }
@@ -235,6 +264,25 @@ function groupPage() {
     <div class="card"><h3>Investments & international</h3><p>Canadian acquisitions, joint ventures, greenfield projects and selected international market development.</p></div>
   </div>
   <p class="note" style="margin-top:1.4rem;font-size:.87rem;color:var(--ink-faint);background:var(--surface-2);border-left:3px solid var(--brand-line);padding:.9rem 1.1rem;border-radius:0 8px 8px 0;max-width:70ch">Whether each function sits in a separate corporation is a legal and tax question, decided with Canadian counsel and a CPA — not by a website diagram. This page describes the functions the Group performs, which is what matters here.</p>
+</div></section>
+
+<section class="section section--alt"><div class="wrap">
+  ${sectionHead({ eyebrow: "Our story", title: "How the Group came together", lead: "X Group was not designed to look large. It emerged because real operating businesses ended up sharing owners, systems and management — and that machinery deserved to be run well." })}
+  <ol class="timeline" data-stagger>
+    ${milestones.map(m => `<li class="tl-item"><div class="tl-year">${esc(m.year)}</div><div class="tl-body"><h3>${esc(m.title)}</h3><p>${esc(m.body)}</p></div></li>`).join("")}
+  </ol>
+</div></section>
+
+<section class="section"><div class="wrap split split--wide">
+  <div data-reveal>
+    <p class="eyebrow">Governance</p>
+    <h2 class="h2">Held to a standard beyond what a private group requires</h2>
+    <p>Because our counterparties — banks, insurers, acquirers, partners and government agencies — expect it, we maintain a board, committee structure and a full policy framework: a Code of Conduct, anti-bribery and sanctions-compliance policies, and beneficial-ownership records designed to withstand third-party due diligence.</p>
+    <p style="margin-top:1.3rem"><a class="btn btn-ghost" href="/governance">Governance & board ${icon("arrow","icon")}</a></p>
+  </div>
+  <div class="grid" data-reveal="right" style="gap:.8rem">
+    ${governance.responsibility.map(r => `<div class="card" style="padding:1.1rem 1.3rem"><h3 style="font-size:1.02rem">${esc(r.title)}</h3><p style="margin:.35rem 0 0;color:var(--ink-soft);font-size:.92rem">${esc(r.body)}</p></div>`).join("")}
+  </div>
 </div></section>
 
 ${ctaBand({ title: "Understand the operating model", body: "See how a shared platform lets many local brands run lean — and why that makes the parent worth having.",
@@ -363,7 +411,7 @@ function operatingModelPage() {
   <div class="diagram-wrap" data-reveal="right">${capitalFlowDiagram()}</div>
 </div></section>
 
-${ctaBand({ title: "See the portfolio the model supports", body: "Twelve operating brands across three sectors, all running on the same shared infrastructure.",
+${ctaBand({ title: "See the portfolio the model supports", body: `${operatingBrandsCount} operating brands across three sectors, all running on the same shared infrastructure.`,
   actions: `<a class="btn btn-onDark" href="/companies">Our companies ${icon("arrow","icon")}</a><a class="btn btn-lineDark" href="/investments">Investment philosophy</a>` })}
 `;
   return page({ title: "Operating model", path: "/operating-model",
@@ -487,59 +535,170 @@ function leadershipPage() {
   ${crumb([{ name: "Home", href: "/" }, { name: "Leadership" }])}
   <p class="eyebrow">Leadership</p>
   <h1>The people who run the Group</h1>
-  <p class="lead">Five real leaders beat twelve invented titles. Each person here genuinely performs the function named — with hands-on experience building and operating field-service businesses in British Columbia.</p>
+  <p class="lead">X Group is led by an executive team of operators, each accountable for a real function — strategy and capital allocation, operations, finance, technology, people, procurement and corporate development. Every leader has hands-on experience building and running field-service businesses in British Columbia.</p>
 </div></section>
 <section class="section"><div class="wrap">
   <div class="exec-grid" data-stagger>${cards}</div>
-  <p class="note" style="margin-top:2rem;font-size:.87rem;color:var(--ink-faint);background:var(--surface-2);border-left:3px solid var(--brand-line);padding:.9rem 1.1rem;border-radius:0 8px 8px 0;max-width:78ch">Portraits shown are placeholders; professional photographs and LinkedIn profiles are added as each is finalized. Biographies describe real responsibilities within the Group.</p>
+  <div class="lead-govern card" data-reveal>
+    <div><p class="eyebrow" style="margin-bottom:.4rem">Governance</p><h3 style="font-size:1.15rem">The Board oversees management</h3><p style="margin:.5rem 0 0;color:var(--ink-soft);max-width:60ch">A Board of Directors, an independent Chair and committee structure sit above the executive team. See how the Group is governed.</p></div>
+    <a class="btn btn-ghost" href="/governance">Governance & board ${icon("arrow","icon")}</a>
+  </div>
+  <p class="note" style="margin-top:1.5rem;font-size:.87rem;color:var(--ink-faint);background:var(--surface-2);border-left:3px solid var(--brand-line);padding:.9rem 1.1rem;border-radius:0 8px 8px 0;max-width:78ch">Portraits shown are placeholders; professional photographs and LinkedIn profiles are added as each is finalized. Biographies describe real responsibilities within the Group.</p>
 </div></section>
 ${ctaBand({ title: "Talk to the team", body: "For acquisitions, partnerships, international inquiries, media or careers — reach the right person directly.",
-  actions: `<a class="btn btn-onDark" href="/contact">Contact the Group ${icon("arrow","icon")}</a>` })}
+  actions: `<a class="btn btn-onDark" href="/contact">Contact the Group ${icon("arrow","icon")}</a><a class="btn btn-lineDark" href="/careers">Careers</a>` })}
 `;
   return page({ title: "Leadership", path: "/leadership",
-    description: `Meet the ${group.brandName} leadership team — operators responsible for strategy, finance, operations, technology, people, procurement and corporate development.`,
-    jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Leadership", href: "/leadership" }])], main });
+    description: `Meet the ${group.brandName} leadership team — the executive operators responsible for strategy, finance, operations, technology, people, procurement and corporate development.`,
+    jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Leadership", href: "/leadership" }]), ...executives.map(personSchema)], main });
 }
 
-// ---------------------------------------------------------------- INSIGHTS
-function insightsPage() {
-  const items = insights.map(p => `<a class="insight" href="/insights/${p.slug}" data-reveal>
-      <span class="insight-date">${esc(p.dateLabel)} · ${p.readMins} min</span>
-      <div><h3>${esc(p.title)}</h3><p>${esc(p.summary)}</p><span class="insight-more textlink">Read ${icon("arrow","icon-xs")}</span></div>
+// ---------------------------------------------------------------- NEWSROOM
+function newsroomPage() {
+  const items = newsroom.map(n => `<a class="insight" href="/news/${n.slug}" data-reveal>
+      <span class="insight-date">${esc(n.type)}<br>${esc(n.dateLabel)} · ${n.readMins} min</span>
+      <div><h3>${esc(n.title)}</h3><p>${esc(n.summary)}</p><span class="insight-more textlink">Read ${icon("arrow","icon-xs")}</span></div>
     </a>`).join("");
   const main = `
 <section class="page-hero"><div class="wrap">
-  ${crumb([{ name: "Home", href: "/" }, { name: "Insights" }])}
-  <p class="eyebrow">Insights</p>
-  <h1>How we think about building a group</h1>
-  <p class="lead">Short, plain notes on the operating-holding-company model, shared infrastructure and how we approach new markets.</p>
+  ${crumb([{ name: "Home", href: "/" }, { name: "Newsroom" }])}
+  <p class="eyebrow">Newsroom</p>
+  <h1>News &amp; perspectives</h1>
+  <p class="lead">Announcements from X Group and plain-language perspectives on the operating-holding-company model, shared infrastructure and how we approach new markets. For media inquiries, contact ${mail(group.emails.media)}.</p>
 </div></section>
 <section class="section"><div class="wrap"><div class="insight-list">${items}</div></div></section>
 `;
-  return page({ title: "Insights", path: "/insights",
-    description: `Notes from ${group.brandName} on operating-holding-company strategy, shared infrastructure and international market development.`,
-    jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Insights", href: "/insights" }])], main });
+  return page({ title: "Newsroom", path: "/news",
+    description: `News and perspectives from ${group.brandName} — announcements and plain-language notes on operating-holding-company strategy, shared infrastructure and international market development.`,
+    jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Newsroom", href: "/news" }])], main });
 }
 
-function insightArticle(p) {
-  const body = p.body.map(par => `<p>${esc(par)}</p>`).join("");
+function newsArticle(n) {
+  const isNews = n.type === "Announcement";
+  const body = n.body.map(par => `<p>${esc(par)}</p>`).join("");
   const main = `
 <section class="section"><div class="wrap">
-  ${crumb([{ name: "Home", href: "/" }, { name: "Insights", href: "/insights" }, { name: p.title }])}
+  ${crumb([{ name: "Home", href: "/" }, { name: "Newsroom", href: "/news" }, { name: n.title }])}
   <article class="article">
-    <p class="eyebrow">Insight · ${esc(p.dateLabel)}</p>
-    <h1>${esc(p.title)}</h1>
-    <p class="article-meta">${esc(p.dateLabel)} · ${p.readMins} min read</p>
+    <p class="eyebrow">${esc(n.type)} · ${esc(n.dateLabel)}</p>
+    <h1>${esc(n.title)}</h1>
+    <p class="article-meta">${esc(n.dateLabel)} · ${n.readMins} min read</p>
     ${body}
-    <p style="margin-top:2rem"><a class="textlink" href="/insights">${icon("arrow","icon-xs")} All insights</a></p>
+    <p style="margin-top:2rem"><a class="textlink" href="/news">${icon("arrow","icon-xs")} All news &amp; perspectives</a></p>
   </article>
 </div></section>
 `;
-  const ld = { "@context": "https://schema.org", "@type": "Article", headline: p.title, datePublished: p.date,
-    author: { "@type": "Organization", name: group.legalName }, publisher: { "@type": "Organization", name: group.legalName },
-    mainEntityOfPage: group.baseUrl + `/insights/${p.slug}` };
-  return page({ title: p.title, path: `/insights/${p.slug}`, description: p.summary,
-    jsonld: [ld, breadcrumb([{ name: "Home", href: "/" }, { name: "Insights", href: "/insights" }, { name: p.title, href: `/insights/${p.slug}` }])], main });
+  return page({ title: n.title, path: `/news/${n.slug}`, description: n.summary,
+    jsonld: [articleSchema(n, isNews ? "Announcement" : "Perspective", isNews),
+             breadcrumb([{ name: "Home", href: "/" }, { name: "Newsroom", href: "/news" }, { name: n.title, href: `/news/${n.slug}` }])], main });
+}
+
+// ---------------------------------------------------------------- GOVERNANCE
+function governancePage() {
+  const seats = governance.board.seats.map(s =>
+    `<div class="seat"><div class="seat-role">${esc(s.role)}</div><div class="seat-holder">${esc(s.holder)}</div><span class="seat-kind">${esc(s.kind)}</span></div>`).join("");
+  const committees = governance.committees.map(c =>
+    `<article class="card" data-reveal><h3 style="font-size:1.08rem">${esc(c.name)}</h3><p style="margin:.5rem 0 0;color:var(--ink-soft);font-size:.95rem">${esc(c.body)}</p></article>`).join("");
+  const principlesList = governance.principles.map(p => `<li>${icon("check")}<span>${esc(p)}</span></li>`).join("");
+  const policies = governance.policies.map(p => `<a class="policy-link" href="${p.href}">${icon("doc","icon")}<span>${esc(p.label)}</span>${icon("arrow","icon-xs")}</a>`).join("");
+  const resp = governance.responsibility.map(r => `<article class="card" data-reveal><h3 style="font-size:1.02rem">${esc(r.title)}</h3><p style="margin:.35rem 0 0;color:var(--ink-soft);font-size:.92rem">${esc(r.body)}</p></article>`).join("");
+  const main = `
+<section class="page-hero"><div class="wrap">
+  ${crumb([{ name: "Home", href: "/" }, { name: "Governance" }])}
+  <p class="eyebrow">Governance</p>
+  <h1>Corporate governance</h1>
+  <p class="lead">${esc(governance.intro)}</p>
+</div></section>
+
+<section class="section"><div class="wrap split split--wide">
+  <div data-reveal>
+    <p class="eyebrow">Board of Directors</p>
+    <h2 class="h2">Oversight, separate from management</h2>
+    <p>${esc(governance.board.note)}</p>
+    <ul class="vlist" style="margin-top:1.3rem">${principlesList}</ul>
+  </div>
+  <div class="board" data-reveal="right">${seats}</div>
+</div></section>
+
+<section class="section section--alt"><div class="wrap">
+  ${sectionHead({ eyebrow: "Committees", title: "Three standing committees" })}
+  <div class="grid grid-3" data-stagger>${committees}</div>
+</div></section>
+
+<section class="section"><div class="wrap">
+  ${sectionHead({ eyebrow: "Responsibility", title: "How we operate responsibly" })}
+  <div class="grid grid-4" data-stagger>${resp}</div>
+</div></section>
+
+<section class="section section--cool"><div class="wrap">
+  ${sectionHead({ eyebrow: "Policies", title: "Our published policy framework", lead: "Summaries are published here; full policies are provided to counterparties on request." })}
+  <div class="policy-grid" data-stagger>${policies}</div>
+</div></section>
+`;
+  return page({ title: "Governance", path: "/governance",
+    description: `${group.brandName}'s corporate governance — Board of Directors, Audit & Risk, Governance & Nominating and Investment committees, and a published policy framework (Code of Conduct, anti-bribery, sanctions).`,
+    jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Governance", href: "/governance" }])], main });
+}
+
+// ---------------------------------------------------------------- CAREERS
+function careersPage() {
+  const why = careers.why.map(w => `<article class="card cap" data-reveal>${icon(w.icon)}<h3>${esc(w.title)}</h3><p>${esc(w.body)}</p></article>`).join("");
+  const areas = careers.areas.map(a => `<span class="tag">${esc(a)}</span>`).join("");
+  const main = `
+<section class="page-hero"><div class="wrap">
+  ${crumb([{ name: "Home", href: "/" }, { name: "Careers" }])}
+  <p class="eyebrow">Careers</p>
+  <h1>Build a career across the Group</h1>
+  <p class="lead">${esc(careers.lead)}</p>
+</div></section>
+
+<section class="section"><div class="wrap">
+  ${sectionHead({ eyebrow: "Why X Group", title: "A bigger platform behind local work" })}
+  <div class="grid grid-3" data-stagger>${why}</div>
+</div></section>
+
+<section class="section section--alt"><div class="wrap split split--wide">
+  <div data-reveal>
+    <p class="eyebrow">Where we hire</p>
+    <h2 class="h2">Across the Group and its brands</h2>
+    <p>${esc(careers.where)}</p>
+    <div class="tags" style="margin-top:1.2rem">${areas}</div>
+  </div>
+  <figure class="media--treated" data-reveal="right">
+    <img src="/assets/img/technician-onsite.webp" width="900" height="600" alt="A technician in branded workwear servicing equipment on site." loading="lazy">
+    <figcaption class="media-cap" style="padding:.6rem .9rem 0">Real work, real tools, real training.</figcaption>
+  </figure>
+</div></section>
+
+${ctaBand({ title: "Interested in joining?", body: "Send a note and a résumé to our people team — tell us what you do and where you'd like to do it.",
+  actions: `<a class="btn btn-onDark" href="mailto:${group.emails.careers}">${icon("mail","icon")} ${esc(group.emails.careers)}</a>` })}
+`;
+  return page({ title: "Careers", path: "/careers",
+    description: `Careers at ${group.brandName} — field technicians, coordinators, brand managers, and central finance, technology, people and growth roles across British Columbia and beyond.`,
+    jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Careers", href: "/careers" }])], main });
+}
+
+// ---------------------------------------------------------------- FAQ
+function faqPage() {
+  const items = faqs.map(f => `<details class="faq-item" data-reveal>
+      <summary><span>${esc(f.q)}</span>${icon("chevron","icon")}</summary>
+      <div class="faq-a"><p>${esc(f.a)}</p></div>
+    </details>`).join("");
+  const main = `
+<section class="page-hero"><div class="wrap">
+  ${crumb([{ name: "Home", href: "/" }, { name: "FAQ" }])}
+  <p class="eyebrow">Frequently asked questions</p>
+  <h1>About X Group</h1>
+  <p class="lead">Straight answers to what people — customers, business owners, partners, journalists and investment agencies — most often ask about X Group, what it owns, and what it is trying to do.</p>
+</div></section>
+<section class="section"><div class="wrap" style="max-width:820px">
+  <div class="faq-list">${items}</div>
+  <p style="margin-top:1.8rem"><a class="btn btn-ghost" href="/contact">Ask us something else ${icon("arrow","icon")}</a></p>
+</div></section>
+`;
+  return page({ title: "FAQ", path: "/faq",
+    description: `Answers to common questions about ${group.brandName} — what it is, what it owns, where it's based, whether it's acquiring or hiring, and its international plans.`,
+    jsonld: [faqSchema(faqs), breadcrumb([{ name: "Home", href: "/" }, { name: "FAQ", href: "/faq" }])], main });
 }
 
 // ---------------------------------------------------------------- CONTACT
@@ -664,26 +823,25 @@ function notFound() {
 
 // ---------------------------------------------------------------- infra files
 function robots() {
-  return `# ${group.brandName} — robots
+  // Maximum discoverability: allow both AI-search (citation) crawlers and
+  // training crawlers. Explicit allows make intent unambiguous to each engine.
+  const aiBots = ["OAI-SearchBot","ChatGPT-User","GPTBot","PerplexityBot","Perplexity-User",
+    "ClaudeBot","Claude-SearchBot","Claude-User","Applebot","Applebot-Extended","Bingbot",
+    "Googlebot","Google-Extended","CCBot","Amazonbot","Bytespider","cohere-ai","Meta-ExternalAgent"];
+  return `# ${group.brandName} — robots.txt
+# Search, answer-engine and AI crawlers are welcome across the whole site.
+${aiBots.map(b => `User-agent: ${b}\nAllow: /`).join("\n")}
+
 User-agent: *
 Allow: /
 Disallow: /_build/
-
-# AI / answer engines welcome
-User-agent: GPTBot
-Allow: /
-User-agent: ClaudeBot
-Allow: /
-User-agent: PerplexityBot
-Allow: /
-User-agent: Google-Extended
-Allow: /
 
 Sitemap: ${group.baseUrl}/sitemap.xml
 `;
 }
 function sitemap(routes) {
-  const urls = routes.map(r => `  <url><loc>${group.baseUrl}${r === "/" ? "/" : r}</loc><changefreq>monthly</changefreq></url>`).join("\n");
+  const today = new Date().toISOString().slice(0, 10);
+  const urls = routes.map(r => `  <url><loc>${group.baseUrl}${r === "/" ? "/" : r}</loc><lastmod>${today}</lastmod></url>`).join("\n");
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls}
@@ -767,11 +925,12 @@ ErrorDocument 404 /404.html
 console.log("Building " + group.brandName + " site…");
 
 // clean previously generated html (leave assets/_build/.git)
-for (const f of ["index.html","group.html","operating-model.html","investments.html","international.html","leadership.html","contact.html","group-profile.html","corporate-information.html","privacy.html","terms.html","code-of-conduct.html","anti-bribery.html","sanctions.html","404.html"]) {
+for (const f of ["index.html","group.html","operating-model.html","investments.html","international.html","leadership.html","governance.html","careers.html","faq.html","contact.html","group-profile.html","corporate-information.html","privacy.html","terms.html","code-of-conduct.html","anti-bribery.html","sanctions.html","404.html"]) {
   const p = join(ROOT, f); if (existsSync(p)) rmSync(p);
 }
-if (existsSync(join(ROOT, "companies"))) rmSync(join(ROOT, "companies"), { recursive: true });
-if (existsSync(join(ROOT, "insights"))) rmSync(join(ROOT, "insights"), { recursive: true });
+for (const d of ["companies","insights","news"]) {
+  if (existsSync(join(ROOT, d))) rmSync(join(ROOT, d), { recursive: true });
+}
 
 emit("index.html", home());
 emit("group.html", groupPage());
@@ -781,8 +940,11 @@ emit("operating-model.html", operatingModelPage());
 emit("investments.html", investmentsPage());
 emit("international.html", internationalPage());
 emit("leadership.html", leadershipPage());
-emit("insights/index.html", insightsPage());
-for (const p of insights) emit(`insights/${p.slug}.html`, insightArticle(p));
+emit("governance.html", governancePage());
+emit("careers.html", careersPage());
+emit("faq.html", faqPage());
+emit("news/index.html", newsroomPage());
+for (const n of newsroom) emit(`news/${n.slug}.html`, newsArticle(n));
 emit("contact.html", contactPage());
 emit("group-profile.html", groupProfilePage());
 for (const [slug, data] of Object.entries(corporatePages)) emit(`${slug}.html`, docPage(slug, data));
@@ -790,8 +952,8 @@ emit("404.html", notFound());
 
 // infra
 const routes = ["/","/group","/companies", ...publishedCompanies.map(c => `/companies/${c.slug}`),
-  "/operating-model","/investments","/international","/leadership","/insights",
-  ...insights.map(p => `/insights/${p.slug}`),
+  "/operating-model","/investments","/international","/leadership","/governance","/careers","/faq","/news",
+  ...newsroom.map(n => `/news/${n.slug}`),
   "/contact","/group-profile","/corporate-information","/code-of-conduct","/anti-bribery","/sanctions","/privacy","/terms"];
 emit("robots.txt", robots());
 emit("sitemap.xml", sitemap(routes));
