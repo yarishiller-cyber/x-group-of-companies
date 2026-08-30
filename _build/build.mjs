@@ -20,6 +20,13 @@ import { icon, avatar, monogramTile, platformDiagram, capitalFlowDiagram, reachS
 // Small shared partial: a soft note/callout box.
 const noteBox = (html) => `<p class="note">${html}</p>`;
 
+// Executive portrait: use the generated/real photo ONLY when the file actually
+// exists on disk (run _build/gen-portraits.mjs to create the set); otherwise
+// fall back to the monogram avatar so the site always builds cleanly.
+const hasPortrait = (e) => e.photo && existsSync(join(ROOT, e.photo.replace(/^\//, "")));
+const portraitImg = (e, cls) =>
+  `<img class="${cls}" src="${e.photo}" width="800" height="800" alt="Portrait of ${esc(e.name)}, ${esc(e.title)}." loading="lazy" decoding="async">`;
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
 const out = (rel, html) => {
@@ -82,7 +89,7 @@ function home() {
     `<div class="fact"><b>${esc(m.value)}</b><span class="fact-label">${esc(m.label)}</span><span class="fact-note">${esc(m.note)}</span></div>`).join("");
   const modes = investmentModes.map(m => `<div class="mode"><b>${esc(m.verb)}</b><p>${esc(m.body)}</p></div>`).join("");
   const execStrip = executives.slice(0, 5).map((e, i) =>
-    `<div class="exec-mini">${avatar(e.initials, "h" + i)}<div><b>${esc(e.name)}</b><span>${esc(e.title)}</span></div></div>`).join("");
+    `<div class="exec-mini">${hasPortrait(e) ? portraitImg(e, "exec-avatar") : avatar(e.initials, "h" + i)}<div><b>${esc(e.name)}</b><span>${esc(e.title)}</span></div></div>`).join("");
 
   const main = `
 <section class="hero">
@@ -518,7 +525,7 @@ function leadershipPage() {
   const cards = executives.map((e, i) => {
     const areas = e.areas.map(a => `<span>${esc(a)}</span>`).join("");
     const link = e.linkedin ? `<a class="exec-link textlink" href="${e.linkedin}" target="_blank" rel="noopener">LinkedIn ${icon("ext","icon-xs")}</a>` : "";
-    const portrait = e.photo ? `<img class="exec-photo" src="${e.photo}" alt="Portrait of ${esc(e.name)}, ${esc(e.title)}." loading="lazy">` : avatar(e.initials, "L" + i);
+    const portrait = hasPortrait(e) ? portraitImg(e, "exec-photo") : avatar(e.initials, "L" + i);
     return `<article class="exec" data-reveal>
       ${portrait}
       <div class="exec-body">

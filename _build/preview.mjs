@@ -35,11 +35,16 @@ const routeOf = (file) => {
 // ---- inline images as data URIs --------------------------------------------
 const IMG_DIR = join(ROOT, "assets/img");
 const dataUris = {};
-for (const f of readdirSync(IMG_DIR)) {
-  const mime = f.endsWith(".webp") ? "image/webp" : f.endsWith(".png") ? "image/png" : null;
-  if (!mime) continue;
-  dataUris[`/assets/img/${f}`] = `data:${mime};base64,${readFileSync(join(IMG_DIR, f)).toString("base64")}`;
-}
+(function walkImgs(dir) {
+  for (const f of readdirSync(dir)) {
+    const p = join(dir, f);
+    if (statSync(p).isDirectory()) { walkImgs(p); continue; }
+    const mime = f.endsWith(".webp") ? "image/webp" : f.endsWith(".png") ? "image/png" : null;
+    if (!mime) continue;
+    const url = "/" + relative(ROOT, p).replace(/\\/g, "/");
+    dataUris[url] = `data:${mime};base64,${readFileSync(p).toString("base64")}`;
+  }
+})(IMG_DIR);
 const inlineImages = (html) => {
   for (const [src, uri] of Object.entries(dataUris)) html = html.split(`src="${src}"`).join(`src="${uri}"`);
   return html;
