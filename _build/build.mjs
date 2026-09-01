@@ -20,12 +20,22 @@ import { icon, avatar, monogramTile, platformDiagram, capitalFlowDiagram, reachS
 // Small shared partial: a soft note/callout box.
 const noteBox = (html) => `<p class="note">${html}</p>`;
 
-// Executive portrait: use the generated/real photo ONLY when the file actually
-// exists on disk (run _build/gen-portraits.mjs to create the set); otherwise
-// fall back to the monogram avatar so the site always builds cleanly.
-const hasPortrait = (e) => e.photo && existsSync(join(ROOT, e.photo.replace(/^\//, "")));
+// Executive portrait, three tiers:
+//   1. photoreal /assets/img/team/<slug>.webp   (gen-portraits.mjs — Nano Banana)
+//   2. illustrated <slug>-illustrated.webp      (gen-illustrated.mjs — always available)
+//   3. monogram avatar                          (never breaks)
+// Whichever file exists highest in that order is used, so the site upgrades
+// itself automatically the moment better portraits land on disk.
+const fileExists = (webPath) => webPath && existsSync(join(ROOT, webPath.replace(/^\//, "")));
+const portraitSrc = (e) => {
+  if (fileExists(e.photo)) return e.photo;
+  const ill = e.photo && e.photo.replace(".webp", "-illustrated.webp");
+  if (fileExists(ill)) return ill;
+  return null;
+};
+const hasPortrait = (e) => portraitSrc(e) !== null;
 const portraitImg = (e, cls) =>
-  `<img class="${cls}" src="${e.photo}" width="800" height="800" alt="Portrait of ${esc(e.name)}, ${esc(e.title)}." loading="lazy" decoding="async">`;
+  `<img class="${cls}" src="${portraitSrc(e)}" width="800" height="800" alt="Portrait of ${esc(e.name)}, ${esc(e.title)}." loading="lazy" decoding="async">`;
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -961,7 +971,16 @@ emit("404.html", notFound());
 const routes = ["/","/group","/companies", ...publishedCompanies.map(c => `/companies/${c.slug}`),
   "/operating-model","/investments","/international","/leadership","/governance","/careers","/faq","/news",
   ...newsroom.map(n => `/news/${n.slug}`),
-  "/contact","/group-profile","/corporate-information","/code-of-conduct","/anti-bribery","/sanctions","/privacy","/terms"];
+  "/contact","/group-profile","/corporate-information","/code-of-conduct","/anti-bribery","/sanctions",
+  "/privacy","/terms","/accessibility","/security"];
+// RFC 9116 vulnerability-disclosure pointer (Contact + Expires required).
+const expires = new Date(Date.now() + 364 * 24 * 3600 * 1000).toISOString().replace(/\.\d+Z$/, "Z");
+emit(".well-known/security.txt", `Contact: mailto:${group.emails.security}
+Expires: ${expires}
+Policy: ${group.baseUrl}/security
+Canonical: ${group.baseUrl}/.well-known/security.txt
+Preferred-Languages: en, fr
+`);
 emit("robots.txt", robots());
 emit("sitemap.xml", sitemap(routes));
 emit("site.webmanifest", manifest());

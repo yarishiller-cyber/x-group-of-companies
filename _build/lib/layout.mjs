@@ -145,6 +145,8 @@ export function footer() {
         <li><a href="/governance">Governance</a></li>
         <li><a href="/privacy">Privacy</a></li>
         <li><a href="/terms">Terms</a></li>
+        <li><a href="/accessibility">Accessibility</a></li>
+        <li><a href="/security">Security</a></li>
       </ul>
     </div>
     <p class="foot-disclaimer">This website is provided for information about ${esc(group.brandName)} and its operating companies. It is not an offer of securities or a solicitation of investment. Figures marked provisional are being verified.</p>

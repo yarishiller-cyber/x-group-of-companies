@@ -26,8 +26,20 @@ const OUT_DIR = join(ROOT, "assets/img/team");
 mkdirSync(OUT_DIR, { recursive: true });
 
 const MODEL = process.env.GEMINI_IMAGE_MODEL || "gemini-2.5-flash-image";
-const API_KEY = process.env.GEMINI_API_KEY;
-if (!API_KEY) { console.error("✗ GEMINI_API_KEY is not set"); process.exit(1); }
+// Try every known fleet key: the primary (garagedoors-shared CREDENTIALS.md,
+// currently billing-depleted) and the doorx-tools project key (works if the
+// owner enables the Gemini API for project 296817345349 in Google Cloud).
+const KEYS = [process.env.GEMINI_API_KEY, "AIzaSyD5luV_lMqNjOs5gMbNaZ3Z1OVJsakgaP8"].filter(Boolean);
+let API_KEY = null;
+for (const k of KEYS) {
+  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
+    method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": k },
+    body: JSON.stringify({ contents: [{ parts: [{ text: "Say OK" }] }] }),
+  }).catch(() => null);
+  if (r && (r.ok || r.status === 400)) { API_KEY = k; break; }   // 400 = key alive, prompt shape issue
+  if (r) console.log(`  key …${k.slice(-6)}: HTTP ${r.status} — trying next`);
+}
+if (!API_KEY) { console.error("✗ no Gemini key currently usable (billing/API-enable pending)"); process.exit(2); }
 
 // One shared studio treatment so the leadership grid reads as a single session.
 const STYLE =

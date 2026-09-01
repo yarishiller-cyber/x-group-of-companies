@@ -50,6 +50,7 @@ export const group = {
     media:         "media@xgroupholdings.ca",
     governance:    "governance@xgroupholdings.ca",
     privacy:       "privacy@xgroupholdings.ca",
+    security:      "security@xgroupholdings.ca",
   },
 
   // --- Social / entity graph (set real URLs before outreach) -----------------

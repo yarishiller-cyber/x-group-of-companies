@@ -187,6 +187,51 @@ export const corporatePages = {
     ],
   },
 
+  "accessibility": {
+    title: "Accessibility statement",
+    lead: "Our commitment to a website every visitor can use — and a direct channel to tell us where we fall short.",
+    blocks: [
+      { p: "X Group is committed to digital accessibility. This website targets conformance with the Web Content Accessibility Guidelines (WCAG) 2.2 at Level AA across all pages." },
+      { h: "What we have built in" },
+      { list: [
+        "Semantic HTML landmarks, a logical heading structure and a skip-to-content link on every page.",
+        "Full keyboard operability, including the navigation menus, with visible focus indicators throughout.",
+        "Colour choices checked for at least AA contrast on text and interactive elements.",
+        "Text that scales with browser settings; no information conveyed by colour alone.",
+        "Descriptive alternative text on informative images; decorative graphics hidden from assistive technology.",
+        "All animation is subtle, and disabled entirely when your system requests reduced motion.",
+        "Content that works without JavaScript — nothing essential is hidden behind scripts.",
+      ]},
+      { h: "Known limitations" },
+      { p: "Diagrams are provided as vector graphics with descriptive text alternatives; we continue to review their labelling for screen-reader clarity. If you encounter any barrier, we want to know." },
+      { h: "Feedback" },
+      { p: "If any part of this site is difficult to use with assistive technology, contact hello@xgroupholdings.ca and we will address it and, where needed, provide the information in an accessible format." },
+      { note: "Scope: this statement covers xgroupholdings.ca. Our operating companies' websites publish their own contact channels. Statement last reviewed: September 2026." },
+    ],
+  },
+
+  "security": {
+    title: "Security & vulnerability disclosure",
+    lead: "How to report a security issue in this website or any Group system — and what you can expect from us.",
+    blocks: [
+      { p: "X Group welcomes good-faith security research. If you believe you have found a vulnerability in this website or in a system operated by the Group or its companies, please tell us privately before any public disclosure." },
+      { h: "How to report" },
+      { defs: [
+        ["Email", "security@xgroupholdings.ca"],
+        ["Machine-readable", "/.well-known/security.txt (RFC 9116)"],
+      ]},
+      { p: "Include enough detail to reproduce the issue — affected URL or system, steps, and impact. Please do not access, modify or exfiltrate data that is not yours, and do not run disruptive or destructive tests." },
+      { h: "What we commit to" },
+      { list: [
+        "Acknowledging your report promptly and keeping you informed as we investigate.",
+        "Not pursuing legal action against good-faith research conducted within this policy.",
+        "Fixing verified issues with a priority proportionate to their impact.",
+        "Crediting reporters who wish to be credited once an issue is resolved.",
+      ]},
+      { note: "This is a public summary of the Group's vulnerability-disclosure practice. It is not an invitation to test third-party systems, including the independent platforms our operating companies use." },
+    ],
+  },
+
   "terms": {
     title: "Website terms",
     lead: "The terms on which this website is provided.",
