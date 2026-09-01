@@ -1,5 +1,5 @@
 Contact: mailto:security@xgroupholdings.ca
-Expires: 2027-08-31T20:09:59Z
+Expires: 2027-08-31T20:18:33Z
 Policy: https://xgroupholdings.ca/security
 Canonical: https://xgroupholdings.ca/.well-known/security.txt
 Preferred-Languages: en, fr
