@@ -14,6 +14,7 @@ import { executives } from "./data/executives.mjs";
 import { metrics, capabilities, investmentModes, investmentAudiences, international,
          principles, milestones, governance, careers, faqs, newsroom } from "./data/content.mjs";
 import { corporatePages } from "./data/site.mjs";
+import { heroes } from "./data/heroes.mjs";
 import { page, esc, siteGraph, breadcrumb, personSchema, faqSchema, articleSchema, orgRef, ORG_ID, ASSET_V } from "./lib/layout.mjs";
 import { icon, avatar, monogramTile, platformDiagram, capitalFlowDiagram, reachSVG, faviconSVG } from "./lib/assets.mjs";
 
@@ -65,9 +66,39 @@ function crumb(items) {
   ).join("")}</nav>`;
 }
 
+// Every page-hero carries a page-specific Nano Banana background (see
+// data/heroes.mjs + gen-heroes.mjs). Falls back to the plain band only if the
+// image hasn't been generated yet, so the build never breaks.
+const heroImg = (key) => `/assets/img/heroes/${key}.webp`;
+function pageHero(heroKey, inner, { extra = "" } = {}) {
+  const h = heroes[heroKey];
+  if (!h || !fileExists(heroImg(heroKey)))
+    return `<section class="page-hero"><div class="wrap">${inner}</div></section>${extra}`;
+  return `<section class="page-hero page-hero--img">
+  <img class="page-hero-bg" src="${heroImg(heroKey)}" alt="${esc(h.alt)}" width="1600" height="686" loading="eager" fetchpriority="high" decoding="async">
+  <div class="page-hero-scrim" aria-hidden="true"></div>
+  <div class="wrap">${inner}</div>
+</section>${extra}`;
+}
+// preload target for a page's hero (undefined when the image doesn't exist)
+const heroPreload = (key) => (heroes[key] && fileExists(heroImg(key)) ? heroImg(key) : undefined);
+
+// Real-website screenshot for a company, captured from the live site
+// (assets/img/sites/<slug>.webp). Companies without one (Allegro X AI) fall
+// back to their monogram treatment.
+const siteShot = (c) => (fileExists(`/assets/img/sites/${c.slug}.webp`) ? `/assets/img/sites/${c.slug}.webp` : null);
+const siteShotImg = (c, cls = "co-shot-img") => {
+  const s = siteShot(c);
+  return s ? `<img class="${cls}" src="${s}" width="640" height="400" alt="Screenshot of the ${esc(c.name)} website, ${esc(c.domain)}." loading="lazy" decoding="async">` : "";
+};
+
 function companyCard(c, id) {
   const founded = c.founded ? `<span>${icon("build", "icon-xs")} Est. ${c.founded}</span>` : "";
+  const shot = siteShot(c)
+    ? `<a class="co-shot" href="${c.website}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">${siteShotImg(c)}<span class="co-shot-domain">${esc(c.domain)}</span></a>`
+    : `<div class="co-shot co-shot--mono" style="--tint:${c.tint}" aria-hidden="true"><span class="co-shot-mono">${esc(c.monogram)}</span><span class="co-shot-domain">${esc(c.domain)}</span></div>`;
   return `<article class="card co-card" data-reveal>
+    ${shot}
     <div class="co-head">
       ${monogramTile(c, id)}
       <div class="co-title">
@@ -154,7 +185,7 @@ function home() {
 <section class="section section--alt">
   <div class="wrap">
     ${sectionHead({ eyebrow: "Companies", title: "A portfolio built from operating experience", lead: "Our companies serve homeowners, commercial operators and enterprises in markets where reliability, responsiveness and execution matter." })}
-    <div class="grid grid-4" data-stagger>${featured.map((c, i) => companyCard(c, "f" + i)).join("")}</div>
+    <div class="grid grid-3" data-stagger>${featured.map((c, i) => companyCard(c, "f" + i)).join("")}</div>
     <p style="margin-top:1.8rem"><a class="btn btn-ghost" href="/companies">See all ${publishedCompanies.length} companies ${icon("arrow","icon")}</a></p>
   </div>
 </section>
@@ -237,12 +268,11 @@ ${ctaBand({
 // ---------------------------------------------------------------- GROUP
 function groupPage() {
   const main = `
-<section class="page-hero"><div class="wrap">
+${pageHero("group", `
   ${crumb([{ name: "Home", href: "/" }, { name: "Group" }])}
   <p class="eyebrow">The Group</p>
   <h1>Built from operating experience — organized to last</h1>
-  <p class="lead">${esc(group.legalName)} is a ${esc(group.descriptor)} that builds, acquires and supports essential-service and technology businesses.</p>
-</div></section>
+  <p class="lead">${esc(group.legalName)} is a ${esc(group.descriptor)} that builds, acquires and supports essential-service and technology businesses.</p>`)}
 
 <section class="section"><div class="wrap split split--wide">
   <div data-reveal>
@@ -306,6 +336,7 @@ ${ctaBand({ title: "Understand the operating model", body: "See how a shared pla
   actions: `<a class="btn btn-onDark" href="/operating-model">Operating model ${icon("arrow","icon")}</a><a class="btn btn-lineDark" href="/leadership">Leadership</a>` })}
 `;
   return page({ title: "Group", path: "/group",
+    preloadImage: heroPreload("group"),
     description: `${group.brandName} is a ${group.descriptor}: local brands, central operating infrastructure and disciplined capital allocation, based in Vancouver, BC.`,
     jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Group", href: "/group" }])], main });
 }
@@ -325,13 +356,27 @@ function companiesPage() {
     </div>`;
   }).join("");
 
+  const wall = publishedCompanies.map((c) => {
+    const media = siteShot(c)
+      ? siteShotImg(c, "wall-shot")
+      : `<span class="wall-mono" style="--tint:${c.tint}">${esc(c.monogram)}</span>`;
+    return `<a class="wall-tile${siteShot(c) ? "" : " wall-tile--mono"}" href="/companies/${c.slug}">
+      ${media}
+      <span class="wall-scrim" aria-hidden="true"></span>
+      <span class="wall-label"><b>${esc(c.name)}</b><span class="wall-sector">${esc(c.category)}</span></span>
+    </a>`;
+  }).join("");
+
   const main = `
-<section class="page-hero"><div class="wrap">
-  ${crumb([{ name: "Home", href: "/" }, { name: "Companies" }])}
-  <p class="eyebrow">Portfolio</p>
-  <h1>Our companies</h1>
-  <p class="lead">A portfolio structured by what each company does — essential home services, industrial field services and technology. Each brand keeps its own local identity; the Group carries the shared infrastructure.</p>
-</div></section>
+<section class="page-hero page-hero--wall">
+  <div class="wrap">
+    ${crumb([{ name: "Home", href: "/" }, { name: "Companies" }])}
+    <p class="eyebrow">Portfolio</p>
+    <h1>Our companies</h1>
+    <p class="lead">${publishedCompanies.length} operating companies and brands — essential home services, industrial field services and technology. Each keeps its own local identity; the Group carries the shared infrastructure.</p>
+  </div>
+  <div class="wrap wall" data-stagger aria-label="All ${group.brandName} companies">${wall}</div>
+</section>
 <section class="section"><div class="wrap">
   ${byCat}
   <p class="note" style="margin-top:2.5rem;font-size:.87rem;color:var(--ink-faint);background:var(--surface-2);border-left:3px solid var(--brand-line);padding:.9rem 1.1rem;border-radius:0 8px 8px 0;max-width:75ch">Relationship labels are deliberately precise. “Operating brand” means a trade name and website operated under a Group company; “Group operating company” means a company the Group owns and operates; “Technology affiliate” denotes a strategic technology relationship. See <a href="/corporate-information">Corporate information</a>.</p>
@@ -358,16 +403,25 @@ function companyDetail(c) {
   const body = c.long.map(p => `<p>${esc(p)}</p>`).join("");
 
   const main = `
-<section class="page-hero"><div class="wrap">
-  ${crumb([{ name: "Home", href: "/" }, { name: "Companies", href: "/companies" }, { name: c.name }])}
-  <div class="co-detail-head" style="margin-top:.5rem">
-    ${monogramTile(c, "d")}
-    <div>
-      <span class="co-relationship" style="background:rgba(255,255,255,.14);color:#dbe8ef">${esc(c.relationshipLabel)}</span>
-      <h1 style="margin-top:.5rem">${esc(c.name)}</h1>
-      <p class="lead" style="margin-top:.6rem">${esc(c.tagline)}</p>
+<section class="page-hero page-hero--detail"><div class="wrap co-detail-hero">
+  <div class="co-detail-main">
+    ${crumb([{ name: "Home", href: "/" }, { name: "Companies", href: "/companies" }, { name: c.name }])}
+    <div class="co-detail-head" style="margin-top:.5rem">
+      ${monogramTile(c, "d")}
+      <div>
+        <span class="co-relationship" style="background:rgba(255,255,255,.14);color:#dbe8ef">${esc(c.relationshipLabel)}</span>
+        <h1 style="margin-top:.5rem">${esc(c.name)}</h1>
+        <p class="lead" style="margin-top:.6rem">${esc(c.tagline)}</p>
+      </div>
     </div>
   </div>
+  ${siteShot(c) ? `<a class="co-detail-shot" href="${c.website}" target="_blank" rel="noopener" data-reveal="right">
+    <span class="co-detail-shot-bar" aria-hidden="true"><i></i><i></i><i></i><em>${esc(c.domain)}</em></span>
+    ${siteShotImg(c, "co-detail-shot-img")}
+  </a>` : `<div class="co-detail-shot co-detail-shot--mono" style="--tint:${c.tint}" data-reveal="right" aria-hidden="true">
+    <span class="co-detail-shot-bar"><i></i><i></i><i></i><em>${esc(c.domain)}</em></span>
+    <span class="co-detail-mono">${esc(c.monogram)}</span>
+  </div>`}
 </div></section>
 
 <section class="section"><div class="wrap" style="max-width:840px">
@@ -401,12 +455,11 @@ function companyDetail(c) {
 function operatingModelPage() {
   const caps = capabilities.map(c => `<article class="card cap" data-reveal>${icon(c.icon)}<h3>${esc(c.title)}</h3><p>${esc(c.body)}</p></article>`).join("");
   const main = `
-<section class="page-hero"><div class="wrap">
+${pageHero("operating-model", `
   ${crumb([{ name: "Home", href: "/" }, { name: "Operating model" }])}
   <p class="eyebrow">Operating model</p>
   <h1>Local accountability. Shared capability.</h1>
-  <p class="lead">Our companies retain their customer relationships, specialist teams and market identities. The Group provides centralized infrastructure — and that is precisely why the parent exists.</p>
-</div></section>
+  <p class="lead">Our companies retain their customer relationships, specialist teams and market identities. The Group provides centralized infrastructure — and that is precisely why the parent exists.</p>`)}
 
 <section class="section"><div class="wrap">
   <div class="diagram-wrap" data-reveal>${platformDiagram()}</div>
@@ -432,6 +485,7 @@ ${ctaBand({ title: "See the portfolio the model supports", body: `${operatingBra
   actions: `<a class="btn btn-onDark" href="/companies">Our companies ${icon("arrow","icon")}</a><a class="btn btn-lineDark" href="/investments">Investment philosophy</a>` })}
 `;
   return page({ title: "Operating model", path: "/operating-model",
+    preloadImage: heroPreload("operating-model"),
     description: `How ${group.brandName} works: a shared platform of finance, procurement, people, technology, growth, operations and strategy beneath lean local operating brands.`,
     jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Operating model", href: "/operating-model" }])], main });
 }
@@ -445,12 +499,11 @@ function investmentsPage() {
       <a class="textlink" href="/contact#${a.cta.emailKey}">${esc(a.cta.label)} ${icon("arrow","icon")}</a>
     </article>`).join("");
   const main = `
-<section class="page-hero"><div class="wrap">
+${pageHero("investments", `
   ${crumb([{ name: "Home", href: "/" }, { name: "Investments" }])}
   <p class="eyebrow">Investments</p>
   <h1>We are operators first</h1>
-  <p class="lead">We are interested in businesses where ownership, operating discipline and shared infrastructure can create value over a long time horizon.</p>
-</div></section>
+  <p class="lead">We are interested in businesses where ownership, operating discipline and shared infrastructure can create value over a long time horizon.</p>`)}
 
 <section class="section"><div class="wrap">
   <div class="modes" data-reveal>${modes}</div>
@@ -480,6 +533,7 @@ ${ctaBand({ title: "Considering a long-term home for your business?", body: "We 
   actions: `<a class="btn btn-onDark" href="/contact#acquisitions">Business owners & acquisitions ${icon("arrow","icon")}</a>` })}
 `;
   return page({ title: "Investments", path: "/investments",
+    preloadImage: heroPreload("investments"),
     description: `${group.brandName} invests where operating expertise matters — acquiring, building and partnering with durable Canadian businesses, and evaluating selected international markets.`,
     jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Investments", href: "/investments" }])], main });
 }
@@ -490,12 +544,11 @@ function internationalPage() {
   const marketCards = international.markets.map(m => `<article class="market"><h3>${icon("pin")}${esc(m.country)}</h3><p>${esc(m.note)}</p></article>`).join("");
   const tags = international.agencyTopics.map(t => `<span class="tag">${esc(t)}</span>`).join("");
   const main = `
-<section class="page-hero"><div class="wrap">
+${pageHero("international", `
   ${crumb([{ name: "Home", href: "/" }, { name: "International" }])}
   <p class="eyebrow">International</p>
   <h1>International opportunities</h1>
-  <p class="lead">${esc(international.intro[0])}</p>
-</div></section>
+  <p class="lead">${esc(international.intro[0])}</p>`)}
 
 <section class="section"><div class="wrap measure">
   <p>${esc(international.intro[1])}</p>
@@ -526,6 +579,7 @@ function internationalPage() {
 </div></section>
 `;
   return page({ title: "International", path: "/international",
+    preloadImage: heroPreload("international"),
     description: `${group.brandName} evaluates selected international markets — shared services, technology and AI, partnerships and acquisitions. A direct line for investment-promotion agencies and technology parks.`,
     jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "International", href: "/international" }])], main });
 }
@@ -548,12 +602,11 @@ function leadershipPage() {
     </article>`;
   }).join("");
   const main = `
-<section class="page-hero"><div class="wrap">
+${pageHero("leadership", `
   ${crumb([{ name: "Home", href: "/" }, { name: "Leadership" }])}
   <p class="eyebrow">Leadership</p>
   <h1>The people who run the Group</h1>
-  <p class="lead">X Group is led by an executive team of operators, each accountable for a real function — strategy and capital allocation, operations, finance, technology, people, procurement and corporate development. Every leader has hands-on experience building and running field-service businesses in British Columbia.</p>
-</div></section>
+  <p class="lead">X Group is led by an executive team of operators, each accountable for a real function — strategy and capital allocation, operations, finance, technology, people, procurement and corporate development. Every leader has hands-on experience building and running field-service businesses in British Columbia.</p>`)}
 <section class="section"><div class="wrap">
   <div class="exec-grid" data-stagger>${cards}</div>
   <div class="lead-govern card" data-reveal>
@@ -566,6 +619,7 @@ ${ctaBand({ title: "Talk to the team", body: "For acquisitions, partnerships, in
   actions: `<a class="btn btn-onDark" href="/contact">Contact the Group ${icon("arrow","icon")}</a><a class="btn btn-lineDark" href="/careers">Careers</a>` })}
 `;
   return page({ title: "Leadership", path: "/leadership",
+    preloadImage: heroPreload("leadership"),
     description: `Meet the ${group.brandName} leadership team — the executive operators responsible for strategy, finance, operations, technology, people, procurement and corporate development.`,
     jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Leadership", href: "/leadership" }]), ...executives.map(personSchema)], main });
 }
@@ -577,15 +631,15 @@ function newsroomPage() {
       <div><h3>${esc(n.title)}</h3><p>${esc(n.summary)}</p><span class="insight-more textlink">Read ${icon("arrow","icon-xs")}</span></div>
     </a>`).join("");
   const main = `
-<section class="page-hero"><div class="wrap">
+${pageHero("news", `
   ${crumb([{ name: "Home", href: "/" }, { name: "Newsroom" }])}
   <p class="eyebrow">Newsroom</p>
   <h1>News &amp; perspectives</h1>
-  <p class="lead">Announcements from X Group and plain-language perspectives on the operating-holding-company model, shared infrastructure and how we approach new markets. For media inquiries, contact ${mail(group.emails.media)}.</p>
-</div></section>
+  <p class="lead">Announcements from X Group and plain-language perspectives on the operating-holding-company model, shared infrastructure and how we approach new markets. For media inquiries, contact ${mail(group.emails.media)}.</p>`)}
 <section class="section"><div class="wrap"><div class="insight-list">${items}</div></div></section>
 `;
   return page({ title: "Newsroom", path: "/news",
+    preloadImage: heroPreload("news"),
     description: `News and perspectives from ${group.brandName} — announcements and plain-language notes on operating-holding-company strategy, shared infrastructure and international market development.`,
     jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Newsroom", href: "/news" }])], main });
 }
@@ -620,12 +674,11 @@ function governancePage() {
   const policies = governance.policies.map(p => `<a class="policy-link" href="${p.href}">${icon("doc","icon")}<span>${esc(p.label)}</span>${icon("arrow","icon-xs")}</a>`).join("");
   const resp = governance.responsibility.map(r => `<article class="card" data-reveal><h3 style="font-size:1.02rem">${esc(r.title)}</h3><p style="margin:.35rem 0 0;color:var(--ink-soft);font-size:.92rem">${esc(r.body)}</p></article>`).join("");
   const main = `
-<section class="page-hero"><div class="wrap">
+${pageHero("governance", `
   ${crumb([{ name: "Home", href: "/" }, { name: "Governance" }])}
   <p class="eyebrow">Governance</p>
   <h1>Corporate governance</h1>
-  <p class="lead">${esc(governance.intro)}</p>
-</div></section>
+  <p class="lead">${esc(governance.intro)}</p>`)}
 
 <section class="section"><div class="wrap split split--wide">
   <div data-reveal>
@@ -653,6 +706,7 @@ function governancePage() {
 </div></section>
 `;
   return page({ title: "Governance", path: "/governance",
+    preloadImage: heroPreload("governance"),
     description: `${group.brandName}'s corporate governance — Board of Directors, Audit & Risk, Governance & Nominating and Investment committees, and a published policy framework (Code of Conduct, anti-bribery, sanctions).`,
     jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Governance", href: "/governance" }])], main });
 }
@@ -662,12 +716,11 @@ function careersPage() {
   const why = careers.why.map(w => `<article class="card cap" data-reveal>${icon(w.icon)}<h3>${esc(w.title)}</h3><p>${esc(w.body)}</p></article>`).join("");
   const areas = careers.areas.map(a => `<span class="tag">${esc(a)}</span>`).join("");
   const main = `
-<section class="page-hero"><div class="wrap">
+${pageHero("careers", `
   ${crumb([{ name: "Home", href: "/" }, { name: "Careers" }])}
   <p class="eyebrow">Careers</p>
   <h1>Build a career across the Group</h1>
-  <p class="lead">${esc(careers.lead)}</p>
-</div></section>
+  <p class="lead">${esc(careers.lead)}</p>`)}
 
 <section class="section"><div class="wrap">
   ${sectionHead({ eyebrow: "Why X Group", title: "A bigger platform behind local work" })}
@@ -691,6 +744,7 @@ ${ctaBand({ title: "Interested in joining?", body: "Send a note and a résumé t
   actions: `<a class="btn btn-onDark" href="mailto:${group.emails.careers}">${icon("mail","icon")} ${esc(group.emails.careers)}</a>` })}
 `;
   return page({ title: "Careers", path: "/careers",
+    preloadImage: heroPreload("careers"),
     description: `Careers at ${group.brandName} — field technicians, coordinators, brand managers, and central finance, technology, people and growth roles across British Columbia and beyond.`,
     jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Careers", href: "/careers" }])], main });
 }
@@ -702,18 +756,18 @@ function faqPage() {
       <div class="faq-a"><p>${esc(f.a)}</p></div>
     </details>`).join("");
   const main = `
-<section class="page-hero"><div class="wrap">
+${pageHero("faq", `
   ${crumb([{ name: "Home", href: "/" }, { name: "FAQ" }])}
   <p class="eyebrow">Frequently asked questions</p>
   <h1>About X Group</h1>
-  <p class="lead">Straight answers to what people — customers, business owners, partners, journalists and investment agencies — most often ask about X Group, what it owns, and what it is trying to do.</p>
-</div></section>
+  <p class="lead">Straight answers to what people — customers, business owners, partners, journalists and investment agencies — most often ask about X Group, what it owns, and what it is trying to do.</p>`)}
 <section class="section"><div class="wrap" style="max-width:820px">
   <div class="faq-list">${items}</div>
   <p style="margin-top:1.8rem"><a class="btn btn-ghost" href="/contact">Ask us something else ${icon("arrow","icon")}</a></p>
 </div></section>
 `;
   return page({ title: "FAQ", path: "/faq",
+    preloadImage: heroPreload("faq"),
     description: `Answers to common questions about ${group.brandName} — what it is, what it owns, where it's based, whether it's acquiring or hiring, and its international plans.`,
     jsonld: [faqSchema(faqs), breadcrumb([{ name: "Home", href: "/" }, { name: "FAQ", href: "/faq" }])], main });
 }
@@ -726,12 +780,11 @@ function contactPage() {
       ${mail(ch.email)}
     </article>`).join("");
   const main = `
-<section class="page-hero"><div class="wrap">
+${pageHero("contact", `
   ${crumb([{ name: "Home", href: "/" }, { name: "Contact" }])}
   <p class="eyebrow">Contact</p>
   <h1>The right line for every purpose</h1>
-  <p class="lead">We route inquiries to the part of the Group that actually handles them — not a single anonymous inbox.</p>
-</div></section>
+  <p class="lead">We route inquiries to the part of the Group that actually handles them — not a single anonymous inbox.</p>`)}
 <section class="section"><div class="wrap">
   <div class="channels" data-stagger>${channels}</div>
   <div class="card" style="margin-top:1.6rem;display:flex;gap:1.2rem;flex-wrap:wrap;align-items:center;justify-content:space-between" data-reveal>
@@ -747,6 +800,7 @@ function contactPage() {
 </div></section>
 `;
   return page({ title: "Contact", path: "/contact",
+    preloadImage: heroPreload("contact"),
     description: `Contact ${group.brandName} — direct lines for general inquiries, business owners and acquisitions, international and government relations, suppliers, careers and media.`,
     jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Contact", href: "/contact" }])], main });
 }
@@ -757,13 +811,12 @@ function groupProfilePage() {
   const list = publishedCompanies.map(c => `<li><b>${esc(c.name)}</b> — <span style="color:var(--ink-soft)">${esc(c.relationshipLabel)}, ${esc(c.category)}, ${esc(c.geography.join(", "))}</span></li>`).join("");
   const execList = executives.map(e => `<li><b>${esc(e.name)}</b> — ${esc(e.title)}</li>`).join("");
   const main = `
-<section class="page-hero"><div class="wrap">
+${pageHero("group-profile", `
   ${crumb([{ name: "Home", href: "/" }, { name: "Group profile" }])}
   <p class="eyebrow">One-page overview</p>
   <h1>Group profile</h1>
   <p class="lead">A concise overview of ${esc(group.legalName)} — the page to share with a bank, a lawyer, a counterparty or an investment agency.</p>
-  <p style="margin-top:1rem"><a class="btn btn-onDark" href="javascript:window.print()">${icon("arrow","icon")} Print / save as PDF</a></p>
-</div></section>
+  <p style="margin-top:1rem"><a class="btn btn-onDark" href="javascript:window.print()">${icon("arrow","icon")} Print / save as PDF</a></p>`)}
 <section class="section"><div class="wrap" style="max-width:860px">
   <div class="doc">
     <h2 style="margin-top:0">Who we are</h2>
@@ -798,6 +851,7 @@ function groupProfilePage() {
 </div></section>
 `;
   return page({ title: "Group profile", path: "/group-profile",
+    preloadImage: heroPreload("group-profile"),
     description: `A one-page overview of ${group.legalName}: who we are, our operating model, portfolio, leadership, international interests and contacts.`,
     jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Group profile", href: "/group-profile" }])], main });
 }
@@ -813,28 +867,27 @@ function docPage(slug, data) {
     return "";
   }).join("");
   const main = `
-<section class="page-hero"><div class="wrap">
+${pageHero(slug, `
   ${crumb([{ name: "Home", href: "/" }, { name: data.title }])}
   <p class="eyebrow">Corporate</p>
   <h1>${esc(data.title)}</h1>
-  ${data.lead ? `<p class="lead">${esc(data.lead)}</p>` : ""}
-</div></section>
+  ${data.lead ? `<p class="lead">${esc(data.lead)}</p>` : ""}`)}
 <section class="section"><div class="wrap"><div class="doc" data-reveal>${blocks}</div></div></section>
 `;
   return page({ title: data.title, path: `/${slug}`, description: data.lead || `${data.title} — ${group.brandName}.`,
+    preloadImage: heroPreload(slug),
     jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: data.title, href: `/${slug}` }])], main });
 }
 
 // ---------------------------------------------------------------- 404
 function notFound() {
-  const main = `<section class="page-hero"><div class="wrap">
+  const main = pageHero("group", `
     <p class="eyebrow">404</p><h1>Page not found</h1>
     <p class="lead">The page you're looking for isn't here. Try the Group, our companies, or contact us.</p>
     <div class="hero-actions" style="margin-top:1.5rem">
       <a class="btn btn-onDark" href="/">Home</a>
       <a class="btn btn-lineDark" href="/companies">Our companies</a>
-    </div>
-  </div></section>`;
+    </div>`);
   return page({ title: "Page not found", path: "/404", description: "Page not found.", main });
 }
 

@@ -91,7 +91,7 @@ export const companies = [
     ],
     poc: { name: "Ian Beckett", role: "Service Manager", email: "info@westvangaragedoors.ca" },
     metrics: [],
-    featured: false,
+    featured: true,
     published: true,
   },
   {
@@ -229,7 +229,7 @@ export const companies = [
     ],
     poc: { name: "Sam Whitlock", role: "Owner-Operator", email: "info@probablyfinegaragedoors.ca" },
     metrics: [],
-    featured: false,
+    featured: true,
     published: true,
   },
   {

@@ -30,8 +30,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/assets/css/styles.css?v=2">
-
+<link rel="stylesheet" href="/assets/css/styles.css?v=3">
+<link rel="preload" as="image" href="/assets/img/heroes/terms.webp" fetchpriority="high">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://xgroupholdings.ca/"},{"@type":"ListItem","position":2,"name":"Website terms","item":"https://xgroupholdings.ca/terms"}]}</script>
 </head>
 <body class="">
@@ -73,12 +73,15 @@
 </header>
 <main id="main">
 
-<section class="page-hero"><div class="wrap">
+<section class="page-hero page-hero--img">
+  <img class="page-hero-bg" src="/assets/img/heroes/terms.webp" alt="A fountain pen resting on a thick stack of blank pages — plain terms, put in writing." width="1600" height="686" loading="eager" fetchpriority="high" decoding="async">
+  <div class="page-hero-scrim" aria-hidden="true"></div>
+  <div class="wrap">
   <nav class="crumb" aria-label="Breadcrumb"><a href="/">Home</a><span>›</span><em>Website terms</em></nav>
   <p class="eyebrow">Corporate</p>
   <h1>Website terms</h1>
-  <p class="lead">The terms on which this website is provided.</p>
-</div></section>
+  <p class="lead">The terms on which this website is provided.</p></div>
+</section>
 <section class="section"><div class="wrap"><div class="doc" data-reveal><p>This website is provided for general information about X Group and its operating companies. It does not constitute an offer of securities, a solicitation of investment, or professional advice.</p><h2>Accuracy</h2><p>We take care to keep information accurate and current, and we flag figures that are still being verified. Some details on this site are placeholders that will be replaced with verified information; where a value is marked “to be confirmed,” it should be treated as provisional.</p><h2>Third-party sites</h2><p>Links to our operating companies' websites and to external organizations are provided for convenience. The Group is not responsible for the content of external sites.</p><h2>Trademarks</h2><p>Brand names and logos of the Group's operating companies are the property of their respective owners within the Group.</p><p class="note">Contact governance@xgroupholdings.ca with any questions about these terms.</p></div></div></section>
 
 </main>
@@ -139,6 +142,6 @@
     <p class="foot-disclaimer">This website is provided for information about X Group and its operating companies. It is not an offer of securities or a solicitation of investment. Figures marked provisional are being verified.</p>
   </div>
 </footer>
-<script src="/assets/js/main.js?v=2" defer></script>
+<script src="/assets/js/main.js?v=3" defer></script>
 </body>
 </html>

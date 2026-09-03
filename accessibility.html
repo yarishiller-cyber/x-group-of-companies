@@ -30,8 +30,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/assets/css/styles.css?v=2">
-
+<link rel="stylesheet" href="/assets/css/styles.css?v=3">
+<link rel="preload" as="image" href="/assets/img/heroes/accessibility.webp" fetchpriority="high">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://xgroupholdings.ca/"},{"@type":"ListItem","position":2,"name":"Accessibility statement","item":"https://xgroupholdings.ca/accessibility"}]}</script>
 </head>
 <body class="">
@@ -73,12 +73,15 @@
 </header>
 <main id="main">
 
-<section class="page-hero"><div class="wrap">
+<section class="page-hero page-hero--img">
+  <img class="page-hero-bg" src="/assets/img/heroes/accessibility.webp" alt="A smooth accessible entrance ramp with a steel handrail at a modern building." width="1600" height="686" loading="eager" fetchpriority="high" decoding="async">
+  <div class="page-hero-scrim" aria-hidden="true"></div>
+  <div class="wrap">
   <nav class="crumb" aria-label="Breadcrumb"><a href="/">Home</a><span>›</span><em>Accessibility statement</em></nav>
   <p class="eyebrow">Corporate</p>
   <h1>Accessibility statement</h1>
-  <p class="lead">Our commitment to a website every visitor can use — and a direct channel to tell us where we fall short.</p>
-</div></section>
+  <p class="lead">Our commitment to a website every visitor can use — and a direct channel to tell us where we fall short.</p></div>
+</section>
 <section class="section"><div class="wrap"><div class="doc" data-reveal><p>X Group is committed to digital accessibility. This website targets conformance with the Web Content Accessibility Guidelines (WCAG) 2.2 at Level AA across all pages.</p><h2>What we have built in</h2><ul class="bullets"><li>Semantic HTML landmarks, a logical heading structure and a skip-to-content link on every page.</li><li>Full keyboard operability, including the navigation menus, with visible focus indicators throughout.</li><li>Colour choices checked for at least AA contrast on text and interactive elements.</li><li>Text that scales with browser settings; no information conveyed by colour alone.</li><li>Descriptive alternative text on informative images; decorative graphics hidden from assistive technology.</li><li>All animation is subtle, and disabled entirely when your system requests reduced motion.</li><li>Content that works without JavaScript — nothing essential is hidden behind scripts.</li></ul><h2>Known limitations</h2><p>Diagrams are provided as vector graphics with descriptive text alternatives; we continue to review their labelling for screen-reader clarity. If you encounter any barrier, we want to know.</p><h2>Feedback</h2><p>If any part of this site is difficult to use with assistive technology, contact hello@xgroupholdings.ca and we will address it and, where needed, provide the information in an accessible format.</p><p class="note">Scope: this statement covers xgroupholdings.ca. Our operating companies' websites publish their own contact channels. Statement last reviewed: September 2026.</p></div></div></section>
 
 </main>
@@ -139,6 +142,6 @@
     <p class="foot-disclaimer">This website is provided for information about X Group and its operating companies. It is not an offer of securities or a solicitation of investment. Figures marked provisional are being verified.</p>
   </div>
 </footer>
-<script src="/assets/js/main.js?v=2" defer></script>
+<script src="/assets/js/main.js?v=3" defer></script>
 </body>
 </html>

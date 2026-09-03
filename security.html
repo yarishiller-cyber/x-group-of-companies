@@ -30,8 +30,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Inter:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/assets/css/styles.css?v=2">
-
+<link rel="stylesheet" href="/assets/css/styles.css?v=3">
+<link rel="preload" as="image" href="/assets/img/heroes/security.webp" fetchpriority="high">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://xgroupholdings.ca/"},{"@type":"ListItem","position":2,"name":"Security & vulnerability disclosure","item":"https://xgroupholdings.ca/security"}]}</script>
 </head>
 <body class="">
@@ -73,12 +73,15 @@
 </header>
 <main id="main">
 
-<section class="page-hero"><div class="wrap">
+<section class="page-hero page-hero--img">
+  <img class="page-hero-bg" src="/assets/img/heroes/security.webp" alt="The machined locking mechanism of a steel industrial door in close detail." width="1600" height="686" loading="eager" fetchpriority="high" decoding="async">
+  <div class="page-hero-scrim" aria-hidden="true"></div>
+  <div class="wrap">
   <nav class="crumb" aria-label="Breadcrumb"><a href="/">Home</a><span>›</span><em>Security &amp; vulnerability disclosure</em></nav>
   <p class="eyebrow">Corporate</p>
   <h1>Security &amp; vulnerability disclosure</h1>
-  <p class="lead">How to report a security issue in this website or any Group system — and what you can expect from us.</p>
-</div></section>
+  <p class="lead">How to report a security issue in this website or any Group system — and what you can expect from us.</p></div>
+</section>
 <section class="section"><div class="wrap"><div class="doc" data-reveal><p>X Group welcomes good-faith security research. If you believe you have found a vulnerability in this website or in a system operated by the Group or its companies, please tell us privately before any public disclosure.</p><h2>How to report</h2><dl class="deflist"><dt>Email</dt><dd>security@xgroupholdings.ca</dd><dt>Machine-readable</dt><dd>/.well-known/security.txt (RFC 9116)</dd></dl><p>Include enough detail to reproduce the issue — affected URL or system, steps, and impact. Please do not access, modify or exfiltrate data that is not yours, and do not run disruptive or destructive tests.</p><h2>What we commit to</h2><ul class="bullets"><li>Acknowledging your report promptly and keeping you informed as we investigate.</li><li>Not pursuing legal action against good-faith research conducted within this policy.</li><li>Fixing verified issues with a priority proportionate to their impact.</li><li>Crediting reporters who wish to be credited once an issue is resolved.</li></ul><p class="note">This is a public summary of the Group's vulnerability-disclosure practice. It is not an invitation to test third-party systems, including the independent platforms our operating companies use.</p></div></div></section>
 
 </main>
@@ -139,6 +142,6 @@
     <p class="foot-disclaimer">This website is provided for information about X Group and its operating companies. It is not an offer of securities or a solicitation of investment. Figures marked provisional are being verified.</p>
   </div>
 </footer>
-<script src="/assets/js/main.js?v=2" defer></script>
+<script src="/assets/js/main.js?v=3" defer></script>
 </body>
 </html>

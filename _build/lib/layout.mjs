@@ -6,7 +6,7 @@ import { primaryNav, footerNav } from "../data/site.mjs";
 import { publishedCompanies } from "../data/companies.mjs";
 import { markSVG, icon } from "./assets.mjs";
 
-export const ASSET_V = "2"; // bump when CSS/JS change (cache-busting ?v=)
+export const ASSET_V = "3"; // bump when CSS/JS change (cache-busting ?v=)
 
 export function esc(s = "") {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
