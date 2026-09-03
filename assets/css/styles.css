@@ -391,3 +391,102 @@ figure{margin:0}
   .co-detail-head{gap:1rem}
 }
 @media (min-width:1001px){ .mobile-nav{display:none!important} }
+
+/* ---------- capmap (interactive operating-model diagram) ---------- */
+.capmap{padding-block:clamp(2.5rem,5vw,4rem);position:relative}
+.capmap .wrap{position:relative}
+.capmap-chips{list-style:none;display:flex;flex-wrap:wrap;gap:.6rem;margin:1.5rem 0 2rem;justify-content:center}
+.chip{appearance:none;background:var(--surface-2);color:var(--ink);border:1.5px solid var(--line-cool);
+  border-radius:var(--r-pill);padding:.65rem 1.15rem;font-family:var(--font-ui);font-size:.95rem;
+  font-weight:500;cursor:pointer;transition:background .15s ease,color .15s ease,box-shadow .15s ease}
+.chip:hover{background:var(--line-cool)}
+.chip[aria-pressed="true"]{background:var(--brand);color:#fff}
+.chip:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.capmap-wires{position:absolute;inset:0;pointer-events:none;z-index:1;width:100%;height:100%}
+.capmap-wires path{stroke:var(--accent-2);stroke-width:1.75;fill:none;opacity:0;
+  stroke-dasharray:1;stroke-dashoffset:1;transition:opacity .15s ease}
+
+.capmap-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1.5rem;margin:2rem 0 1rem;z-index:2;position:relative}
+.capmap-card{background:var(--surface);border:1px solid var(--line-cool);border-radius:var(--r-md);
+  padding:1.5rem;transition:opacity .15s ease,filter .15s ease}
+.capmap-card h3{font-size:1.1rem;margin-bottom:.5rem}
+.capmap-base{font-size:.9rem;color:var(--ink-soft);margin:0 0 .8rem;font-variant-numeric:lining-nums tabular-nums}
+.capmap-cap{font-size:.9rem;color:var(--ink-soft);margin:0;line-height:1.5;display:none}
+.js-anim .capmap-cap{display:none}
+.capmap-hint{text-align:center;font-size:.85rem;color:var(--ink-faint);margin:1.5rem 0 0}
+.capmap-hint[data-js-only]{display:none}
+.js-anim .capmap-hint[data-js-only]{display:block}
+
+/* dim floor when any capability is active */
+.capmap[data-active]:not([data-active=""]) .capmap-card{opacity:.4;filter:saturate(.6);
+  transition:opacity .15s ease,filter .15s ease}
+
+/* finance */
+.capmap[data-active="finance"] .capmap-card[data-groups~="finance"]{
+  opacity:1;filter:none;outline:2px solid var(--accent);outline-offset:3px;
+  transition:opacity .08s ease,filter .08s ease}
+.capmap[data-active="finance"] .capmap-cap[data-for="finance"]{display:block}
+.capmap[data-active="finance"] .chip[data-cap="finance"]{background:var(--brand);color:#fff}
+.capmap[data-active="finance"] .capmap-wires path[data-for="finance"]{
+  stroke-dashoffset:0;opacity:.75;transition:stroke-dashoffset .45s ease-out .05s,opacity .08s ease}
+
+/* procurement */
+.capmap[data-active="procurement"] .capmap-card[data-groups~="procurement"]{
+  opacity:1;filter:none;outline:2px solid var(--accent);outline-offset:3px;
+  transition:opacity .08s ease,filter .08s ease}
+.capmap[data-active="procurement"] .capmap-cap[data-for="procurement"]{display:block}
+.capmap[data-active="procurement"] .chip[data-cap="procurement"]{background:var(--brand);color:#fff}
+.capmap[data-active="procurement"] .capmap-wires path[data-for="procurement"]{
+  stroke-dashoffset:0;opacity:.75;transition:stroke-dashoffset .45s ease-out .05s,opacity .08s ease}
+
+/* people */
+.capmap[data-active="people"] .capmap-card[data-groups~="people"]{
+  opacity:1;filter:none;outline:2px solid var(--accent);outline-offset:3px;
+  transition:opacity .08s ease,filter .08s ease}
+.capmap[data-active="people"] .capmap-cap[data-for="people"]{display:block}
+.capmap[data-active="people"] .chip[data-cap="people"]{background:var(--brand);color:#fff}
+.capmap[data-active="people"] .capmap-wires path[data-for="people"]{
+  stroke-dashoffset:0;opacity:.75;transition:stroke-dashoffset .45s ease-out .05s,opacity .08s ease}
+
+/* technology */
+.capmap[data-active="technology"] .capmap-card[data-groups~="technology"]{
+  opacity:1;filter:none;outline:2px solid var(--accent);outline-offset:3px;
+  transition:opacity .08s ease,filter .08s ease}
+.capmap[data-active="technology"] .capmap-cap[data-for="technology"]{display:block}
+.capmap[data-active="technology"] .chip[data-cap="technology"]{background:var(--brand);color:#fff}
+.capmap[data-active="technology"] .capmap-wires path[data-for="technology"]{
+  stroke-dashoffset:0;opacity:.75;transition:stroke-dashoffset .45s ease-out .05s,opacity .08s ease}
+
+/* growth */
+.capmap[data-active="growth"] .capmap-card[data-groups~="growth"]{
+  opacity:1;filter:none;outline:2px solid var(--accent);outline-offset:3px;
+  transition:opacity .08s ease,filter .08s ease}
+.capmap[data-active="growth"] .capmap-cap[data-for="growth"]{display:block}
+.capmap[data-active="growth"] .chip[data-cap="growth"]{background:var(--brand);color:#fff}
+.capmap[data-active="growth"] .capmap-wires path[data-for="growth"]{
+  stroke-dashoffset:0;opacity:.75;transition:stroke-dashoffset .45s ease-out .05s,opacity .08s ease}
+
+/* operations */
+.capmap[data-active="operations"] .capmap-card[data-groups~="operations"]{
+  opacity:1;filter:none;outline:2px solid var(--accent);outline-offset:3px;
+  transition:opacity .08s ease,filter .08s ease}
+.capmap[data-active="operations"] .capmap-cap[data-for="operations"]{display:block}
+.capmap[data-active="operations"] .chip[data-cap="operations"]{background:var(--brand);color:#fff}
+.capmap[data-active="operations"] .capmap-wires path[data-for="operations"]{
+  stroke-dashoffset:0;opacity:.75;transition:stroke-dashoffset .45s ease-out .05s,opacity .08s ease}
+
+/* strategy */
+.capmap[data-active="strategy"] .capmap-card[data-groups~="strategy"]{
+  opacity:1;filter:none;outline:2px solid var(--accent);outline-offset:3px;
+  transition:opacity .08s ease,filter .08s ease}
+.capmap[data-active="strategy"] .capmap-cap[data-for="strategy"]{display:block}
+.capmap[data-active="strategy"] .chip[data-cap="strategy"]{background:var(--brand);color:#fff}
+.capmap[data-active="strategy"] .capmap-wires path[data-for="strategy"]{
+  stroke-dashoffset:0;opacity:.75;transition:stroke-dashoffset .45s ease-out .05s,opacity .08s ease}
+
+/* reduced motion: preserve state changes but remove draw-in animation */
+@media (prefers-reduced-motion:reduce){
+  .capmap-wires path{transition:none}
+  .capmap *{transition-duration:.01ms}
+}
