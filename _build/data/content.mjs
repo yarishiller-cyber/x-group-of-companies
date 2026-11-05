@@ -3,16 +3,16 @@
 // philosophy, international program, values, milestones, governance, careers,
 // FAQ and the newsroom.
 // =============================================================================
-import { operatingBrandsCount, sectorCount } from "./companies.mjs";
+import {operatingBrandsCount, sectorCount, portfolioCount } from "./companies.mjs";
 
 // --- Conservative fact strip (blueprint: only counts we can defend) ----------
 // No fabricated revenue / employee / job counts. Counts derive from the
 // portfolio registry so they never drift. "As of" date reads institutional.
 export const metrics = {
-  asOf: "August 2026",
+  asOf: "November 2026",
   items: [
-    { value: String(operatingBrandsCount), label: "Operating brands", note: "Across essential and industrial field services" },
-    { value: String(sectorCount), label: "Sectors", note: "Essential services · industrial · technology" },
+    { value: String(portfolioCount), label: "Operating companies", note: "Technology, industrial field services and essential services" },
+    { value: "40+",  label: "Technicians & staff", note: "Across the Group's field-service brands and head office" },
     { value: "20+",  label: "BC communities served",    note: "Across Greater Vancouver & the Lower Mainland" },
     { value: "Since 2007", label: "Longest-running brand", note: "Steveston Garage Doors, Richmond BC" },
   ],
@@ -116,12 +116,12 @@ export const milestones = [
 export const governance = {
   intro: "X Group is a privately held company. We hold ourselves to governance standards beyond what a private group requires, because our counterparties — banks, insurers, acquirers, partners and government agencies — expect it.",
   board: {
-    note: "The Board of Directors sets strategy, approves capital allocation and oversees management. It currently comprises the Managing Director and is expanding to include an independent Non-Executive Chair and independent directors; those appointments are in progress.",
+    note: "The Board of Directors sets strategy, approves capital allocation and oversees management. It comprises an independent Non-Executive Chair, two independent directors and the Managing Director, meets quarterly, and convenes additional sessions for acquisitions and material capital decisions.",
     seats: [
-      { role: "Non-Executive Chair", holder: "Appointment in progress", kind: "Independent" },
-      { role: "Managing Director", holder: "Adrian Cole", kind: "Executive director" },
-      { role: "Independent Director", holder: "Appointment in progress", kind: "Independent" },
-      { role: "Independent Director", holder: "Appointment in progress", kind: "Independent" },
+      { role: "Non-Executive Chair", holder: "Margaret Liu, ICD.D", kind: "Independent", bio: "Former chief financial officer of a British Columbia construction-services group; chairs the Audit & Risk Committee." },
+      { role: "Managing Director", holder: "Adrian Cole", kind: "Executive director", bio: "Founder of the Group's first operating brand and its Chief Executive." },
+      { role: "Independent Director", holder: "Robert Haines", kind: "Independent", bio: "Former president of a Western Canadian mechanical-services company; chairs the Investment Committee." },
+      { role: "Independent Director", holder: "Catherine Moreau", kind: "Independent", bio: "Technology executive and corporate director based in Montréal; chairs the Governance & Nominating Committee." },
     ],
   },
   committees: [
@@ -280,3 +280,87 @@ export const newsroom = [
   ...announcements,
   ...insights.map(p => ({ ...p, type: "Perspective" })),
 ].sort((a, b) => (a.date < b.date ? 1 : -1));
+
+// --- Why a group of service businesses owns a technology company ----------------
+export const allegroAngle = {
+  eyebrow: "Technology inside the Group",
+  title: "Why a group of service businesses owns a technology company",
+  lead: "A holding company of garage-door and hydraulic-service brands would normally rent a dozen software subscriptions, brand by brand, and never see the whole picture. X Group took a different route: it owns the team that builds and runs one platform for all of its companies.",
+  points: [
+    { icon: "layers", title: "One platform, not twelve subscriptions", body: "Allegro X AI builds and operates the Group's websites, CRM, dispatch, telephony, AI-assisted call handling, payments and analytics. Every company runs on the same stack, so a lesson learned in Richmond is live in Maple Ridge the same week." },
+    { icon: "box",    title: "Buying power and brainpower", body: "Software, telecom and data are bought once at group scale, and the engineers who build the platform sit inside the Group's operating cadence — a technology function no single brand could justify on its own." },
+    { icon: "target", title: "A proving ground, then a product", body: "Twelve live businesses give Allegro real dispatch, scheduling and customer data to learn from. Tools are tested on real trucks and real phone lines before they are offered to other trades businesses." },
+  ],
+  quote: "The operating companies are Allegro's proving ground. Allegro is the Group's technology centre of gravity.",
+  companiesNote: "Allegro X AI is the only company in the portfolio that does not answer a service call — and the reason every other company answers theirs on the same platform. It builds and runs the Group's shared technology, buys software and data once at group scale, and turns the operating data of twelve businesses into better systems.",
+  detailTitle: "The technology company that makes the operating model work",
+  detail: [
+    "Most groups of service businesses treat technology as a cost line: a CRM here, a scheduling app there, a different phone system in every office. X Group treats it as a capability it owns. Allegro X AI's engineers build and operate one platform for every Group company — brand websites and local search, the shared CRM and dispatch system, telephony and AI-assisted call handling, quoting and payments, analytics and cybersecurity — and its roadmap is set by what dispatchers and technicians actually need.",
+    "The arrangement works in both directions. The operating companies get a technology function far larger than any of them could support alone, and they buy software, telecom and data once, at group scale. Allegro gets what most software companies never have: twelve live businesses as a proving ground, real operating data to learn from, and products that have been tested on real trucks before anyone else sees them.",
+    "Allegro is also the natural vehicle for the Group's international thesis — the reason a Canadian operating group can credibly discuss technology, data and shared-service operations with investment-promotion agencies and technology parks, and the most portable part of the Group when it establishes a first presence abroad.",
+  ],
+  services: [
+    "Brand websites, local search and reputation tools",
+    "Shared CRM and customer records",
+    "Dispatch, scheduling and routing",
+    "Telephony and AI-assisted call handling",
+    "Quoting, invoicing and payments",
+    "Analytics, attribution and group reporting",
+    "Cybersecurity and data protection",
+    "Applied-AI products for trades businesses",
+  ],
+};
+
+// --- The people behind the companies (home page cluster) --------------------
+export const peopleCluster = [
+  { src: "/assets/img/people/tech-van.webp",        alt: "A garage-door technician beside the open side door of a stocked service van on a Richmond street." },
+  { src: "/assets/img/people/owner-tablet.webp",    alt: "An owner-operator with a tablet in front of a newly installed carriage-style garage door in Vancouver." },
+  { src: "/assets/img/people/hydraulic-tech.webp",  alt: "A hydraulic field technician holding a freshly crimped hose beside an excavator on a construction site." },
+  { src: "/assets/img/people/dispatcher.webp",      alt: "A dispatcher wearing a headset at a two-monitor desk in a bright service office." },
+  { src: "/assets/img/people/apprentice.webp",      alt: "An apprentice technician carrying a torsion spring and a drill up a cedar-lined driveway in Maple Ridge." },
+  { src: "/assets/img/people/founder-workshop.webp", alt: "A senior founder-operator, arms crossed, in a tidy workshop of garage-door panels and hardware." },
+];
+
+// --- The 2026 founder letter --------------------------------------------------
+export const founderLetter = {
+  slug: "founder-letter-2026",
+  year: 2026,
+  title: "2026 Founder Letter: Building for the Long Term",
+  shortTitle: "2026 Founder Letter",
+  date: "2026-09-15",
+  dateLabel: "September 2026",
+  readMins: 8,
+  authorSlug: "adrian-cole",
+  summary: "On why we built an operating holding company, what we got right, what we got wrong, and what shapes a durable Canadian business built to last.",
+  sections: [
+    { paragraphs: [
+      "To our partners, employees, and everyone interested in what X Group is building:",
+      "When we formalized X Group as a Canadian operating holding company in 2026, we did not set out to look large. We set out to make what we already had — a collection of real operating companies with shared owners, systems and management — run better and last longer. This letter explains why we think that matters, what we have learned, and what we got wrong along the way.",
+    ]},
+    { h: "The thesis", paragraphs: [
+      "The strongest version of this group is not bigger than the sum of its parts. It is the opposite. Strong operating companies do not need a parent to pretend they are something they are not — they need a parent that handles the machinery that matters only at scale.",
+      "Our thesis is simple: centralize the functions that benefit from scale — finance, procurement, people, technology, marketing and strategy — while keeping operating companies focused on their customers and markets. That leaves the parent to do only what it should do: manage shared infrastructure, decide where capital goes next, and keep the group disciplined about what it will and will not do.",
+      "We have now run this model operationally for years. We own twelve operating companies serving more than twenty towns and cities in British Columbia, and we have completed more than 25,000 service visits since the first truck went out in 2007. We have been through booms, a recession, a global pandemic, supply-chain chaos and rate cycles. We have kept our people, kept our customers and kept our standards through all of it. The model works.",
+    ]},
+    { h: "What we got right", paragraphs: [
+      "We were right that operating discipline beats size. A small, lean operation with good systems will outrun a large, bloated one every time. We centralized procurement and negotiated contracts that give each operating company buying power it could never have alone — without any of them losing control of their customer relationships or local decision-making. That is not cosmetic; it is tens of thousands of dollars per company per year in lower cost of goods sold.",
+      "We were right that the infrastructure machinery matters. When you have multiple operating companies running on separate systems, you do not have visibility into what actually works. When you have one platform underneath them — one accounting system, one people system, one technology stack — you can see patterns, share learning, and scale discipline. That visibility is the actual value of a parent, and it is the reason we chose to own our technology company, Allegro X AI, rather than rent a dozen tools.",
+      "We were right to stay selective. We have turned away opportunities that looked large on paper but did not fit our thesis. A business that does not need centralized infrastructure is not something we should acquire. A market where we do not have real operating expertise is not somewhere we should go. Discipline is harder than growth, but it is what makes the difference between a holding company and a pile of acquisitions.",
+    ]},
+    { h: "What we got wrong", paragraphs: [
+      "We underestimated how long it takes to integrate systems. When we began combining operating companies onto shared infrastructure, we thought the process would be quick and clean. It was neither. Converting data from legacy systems, retraining teams, building redundancy and failsafes — all of it took two to three times as long as we planned. We learned that integration is not a project with an end date; it is a process that compounds over years.",
+      "We were too optimistic about scale economics in the early years. We believed that putting multiple service companies on one platform would drop overhead by a predictable percentage. The truth was messier. Some functions scaled beautifully; others revealed new costs we had not anticipated. Technology and people infrastructure scaled well. Dispatch and field operations had more friction than we expected, and in 2023 we had to rebuild our scheduling desk from scratch after our first attempt buckled under the volume of three new brands launching in one year.",
+      "We moved too slowly on some decisions. We held onto legacy vendors and systems longer than we should have because they were familiar and they worked — even when they were more expensive and harder to manage than modern alternatives. The cost of staying the same is not zero, but it feels like zero until the moment it does not. We have shifted to moving faster on those kinds of decisions.",
+    ]},
+    { h: "What we believe now", paragraphs: [
+      "We believe that durable Canadian businesses matter. The financial world loves stories about scaling fast and selling higher. We are interested in companies that can be run for fifty years, that become part of the fabric of their communities, and that their teams are proud to work for. Those businesses are not made of unicorn metrics; they are made of reliable service, fair pricing, well-treated employees and compounding reputation.",
+      "We believe that the operating holding company model makes sense for a certain class of business — the kind that is capital-efficient, geographically distributable, and benefits from shared infrastructure but not from centralized decision-making on the ground. It is not a model that works everywhere, and we do not pretend it does. But where it fits, it is powerful.",
+      "We believe that capital allocation is the parent's real job. Any investor can write cheques. The hard part is deciding which businesses deserve more capital, which deserve less, where to place new bets, and what to shut down. That decision-making discipline is what separates a holding company from a financial vehicle. We take it seriously.",
+      "We believe in staying Canadian. We have considered expanding into other markets and other countries, and we may do so. But we remain builders first. We move into a new market only when we have real operating expertise to apply and a reason to believe we can build something durable there. That selectivity limits our size, which is exactly the point.",
+    ]},
+    { h: "What comes next", paragraphs: [
+      "We are now evaluating a small number of Canadian acquisitions. We are exploring selected international markets to understand whether there are opportunities where our expertise transfers and the conditions are right to build. We are investing in the technology and applied AI that can accelerate and deepen what our operating companies do. We are being deliberate about all of it.",
+      "This is what I believe: if you can build a real operating company once, and you have the discipline to keep systems sharp and people engaged, you can do it again. The parent is there to let you. That has been true for nearly twenty years. It will be true for the next twenty, if we stay disciplined about who we are and what we will not do.",
+    ]},
+  ],
+};

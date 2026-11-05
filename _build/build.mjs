@@ -9,34 +9,16 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 import { group, contactChannels } from "./data/group.mjs";
-import { companies, publishedCompanies, categories, operatingBrandsCount } from "./data/companies.mjs";
-import { executives } from "./data/executives.mjs";
+import { companies, publishedCompanies, categories, operatingBrandsCount, portfolioCount, essentialBrands } from "./data/companies.mjs";
+import { executives, executiveBySlug } from "./data/executives.mjs";
 import { metrics, capabilities, investmentModes, investmentAudiences, international,
-         principles, milestones, governance, careers, faqs, newsroom } from "./data/content.mjs";
+         principles, milestones, governance, careers, faqs, newsroom, allegroAngle, peopleCluster, founderLetter } from "./data/content.mjs";
 import { corporatePages } from "./data/site.mjs";
 import { heroes } from "./data/heroes.mjs";
 import { page, esc, siteGraph, breadcrumb, personSchema, faqSchema, articleSchema, orgRef, ORG_ID, ASSET_V } from "./lib/layout.mjs";
 import { icon, avatar, monogramTile, platformDiagram, capitalFlowDiagram, reachSVG, faviconSVG } from "./lib/assets.mjs";
+import * as pages from "./pages.mjs";
 
-// ---------------------------------------------------------------------------
-// ⚠ STALE GENERATOR GUARD (added 2026-11-05). The committed HTML is currently the
-// source of truth. Since the 2026-09-03 "truth/placeholder pass" (directives A1–A5),
-// the E1/E2 pages and the interactive operating-model diagram were hand-edited into
-// the published HTML and never ported back into these data/templates. Running the
-// generator as-is would: resurrect eight placeholder-named executives with portraits
-// and bios on /leadership (the directives call that the site's biggest liability),
-// delete /insights + the founder letter, revert the sell-your-business /investments
-// page, drop the hreflang + /ru/ wiring and the home/contact/corporate-information
-// truth edits, and remove the capmap diagram. Port those into _build/data + build.mjs
-// first (see docs/DESIGN-DIRECTIVES-2026-08.md), verify `git diff` is clean, then
-// delete this guard. To run anyway:  XG_FORCE_BUILD=1 node _build/build.mjs
-// ---------------------------------------------------------------------------
-if (process.env.XG_FORCE_BUILD !== "1") {
-  console.error("✗ Refusing to build: _build/ is behind the published HTML (see the STALE GENERATOR GUARD note in _build/build.mjs).");
-  console.error("  Running it would overwrite the 2026-09-03 truth pass, delete /insights and revert /investments.");
-  console.error("  Edit the committed .html directly for now, or set XG_FORCE_BUILD=1 once the generator has been re-synced.");
-  process.exit(1);
-}
 
 // Small shared partial: a soft note/callout box.
 const noteBox = (html) => `<p class="note">${html}</p>`;
@@ -112,29 +94,7 @@ const siteShotImg = (c, cls = "co-shot-img") => {
   return s ? `<img class="${cls}" src="${s}" width="640" height="400" alt="Screenshot of the ${esc(c.name)} website, ${esc(c.domain)}." loading="lazy" decoding="async">` : "";
 };
 
-function companyCard(c, id) {
-  const founded = c.founded ? `<span>${icon("build", "icon-xs")} Est. ${c.founded}</span>` : "";
-  const shot = siteShot(c)
-    ? `<a class="co-shot" href="${c.website}" target="_blank" rel="noopener" tabindex="-1" aria-hidden="true">${siteShotImg(c)}<span class="co-shot-domain">${esc(c.domain)}</span></a>`
-    : `<div class="co-shot co-shot--mono" style="--tint:${c.tint}" aria-hidden="true"><span class="co-shot-mono">${esc(c.monogram)}</span><span class="co-shot-domain">${esc(c.domain)}</span></div>`;
-  return `<article class="card co-card" data-reveal>
-    ${shot}
-    <div class="co-head">
-      ${monogramTile(c, id)}
-      <div class="co-title">
-        <h3>${esc(c.name)}</h3>
-        <span class="co-relationship">${esc(c.relationshipLabel)}</span>
-      </div>
-    </div>
-    <span class="co-sector">${esc(c.category)} · ${esc(c.geography.join(", "))}</span>
-    <p>${esc(c.short)}</p>
-    <div class="co-meta">${founded}</div>
-    <div class="co-foot">
-      <a class="co-visit textlink" href="/companies/${c.slug}">Company profile ${icon("arrow","icon-xs")}</a>
-      <a class="textlink" href="${c.website}" target="_blank" rel="noopener">Visit ${icon("ext","icon-xs")}</a>
-    </div>
-  </article>`;
-}
+const companyCard = (c) => pages.companyCard(ctx, c);
 
 function ctaBand({ title, body, actions }) {
   return `<section class="section"><div class="wrap"><div class="cta-band" data-reveal>
@@ -143,147 +103,20 @@ function ctaBand({ title, body, actions }) {
   </div></div></section>`;
 }
 
+// ---------------------------------------------------------------- render context
+// Everything the templates in pages.mjs need: data + the partials above.
+const ctx = {
+  group, contactChannels, companies, publishedCompanies, categories, operatingBrandsCount, portfolioCount, essentialBrands,
+  executives, executiveBySlug, metrics, capabilities, investmentModes, investmentAudiences, international, principles,
+  milestones, governance, careers, faqs, newsroom, allegroAngle, peopleCluster, founderLetter, corporatePages, heroes,
+  page, esc, siteGraph, breadcrumb, personSchema, faqSchema, articleSchema, orgRef, ORG_ID, ASSET_V,
+  icon, avatar, monogramTile, platformDiagram, capitalFlowDiagram, reachSVG,
+  noteBox, fileExists, portraitSrc, hasPortrait, portraitImg, mail, sectionHead, crumb, heroImg, pageHero, heroPreload,
+  siteShot, siteShotImg, ctaBand,
+};
+
 // ---------------------------------------------------------------- HOME
-function home() {
-  const featured = publishedCompanies.filter(c => c.featured);
-  const facts = metrics.items.map(m =>
-    `<div class="fact"><b>${esc(m.value)}</b><span class="fact-label">${esc(m.label)}</span><span class="fact-note">${esc(m.note)}</span></div>`).join("");
-  const modes = investmentModes.map(m => `<div class="mode"><b>${esc(m.verb)}</b><p>${esc(m.body)}</p></div>`).join("");
-  const execStrip = executives.slice(0, 5).map((e, i) =>
-    `<div class="exec-mini">${hasPortrait(e) ? portraitImg(e, "exec-avatar") : avatar(e.initials, "h" + i)}<div><b>${esc(e.name)}</b><span>${esc(e.title)}</span></div></div>`).join("");
-
-  const main = `
-<section class="hero">
-  <div class="wrap hero-inner">
-    <div class="hero-copy">
-      <p class="eyebrow hero-eyebrow">${esc(group.descriptor)}</p>
-      <h1 data-reveal>${esc(group.tagline)}</h1>
-      <p class="lead" data-reveal data-reveal-delay="0.08">${esc(group.positioning)} We centralize the capabilities that benefit from scale while keeping our operating companies close to the customers and communities they serve.</p>
-      <div class="hero-actions" data-reveal data-reveal-delay="0.16">
-        <a class="btn btn-onDark" href="/companies">Explore our companies ${icon("arrow","icon")}</a>
-        <a class="btn btn-lineDark" href="/operating-model">Our operating model</a>
-      </div>
-    </div>
-    <figure class="hero-media" data-reveal="right" data-reveal-delay="0.1">
-      <div class="frame"><img src="/assets/img/hero-field-service.webp" width="1200" height="900"
-        alt="A branded Hydraulic Hero service truck on an industrial job site beside heavy equipment in British Columbia." loading="eager" fetchpriority="high" decoding="async"></div>
-      <div class="hero-badge">${icon("pin")}<div><b>Vancouver, Canada</b><span>Operator-led, since our first service brand</span></div></div>
-    </figure>
-  </div>
-</section>
-
-<section class="factstrip"><div class="wrap">${facts}</div></section>
-<p class="factstrip-note">Figures as of ${esc(metrics.asOf)}. ${esc(metrics.hqLine)}.</p>
-
-<section class="section">
-  <div class="wrap split split--wide">
-    <div data-reveal>
-      <p class="eyebrow">What we are</p>
-      <h2 class="h2">An operating group, not a brand exercise</h2>
-      <p class="lead">A real group emerged because several operating businesses now share owners, infrastructure, management, purchasing power, technology, dispatch, finance, recruiting and strategy. The parent exists to make that reality easier to understand — and to run.</p>
-      <ul class="vlist" style="margin-top:1.4rem">
-        ${group.creed.map(s => `<li>${icon("check")}<span>${esc(s)}</span></li>`).join("")}
-      </ul>
-    </div>
-    <figure class="media--treated" data-reveal="right">
-      <img src="/assets/img/operators.webp" width="1200" height="900"
-        alt="Three generations of operators standing in front of a service van — the family roots behind the group's brands.">
-      <figcaption class="media-cap" style="padding:.6rem .9rem 0">Operators first: the group grew out of real service businesses.</figcaption>
-    </figure>
-  </div>
-</section>
-
-<section class="section section--cool">
-  <div class="wrap">
-    ${sectionHead({ eyebrow: "What we believe", title: "Principles we run the Group by", center: true })}
-    <div class="grid grid-3" data-stagger>
-      ${principles.map(p => `<article class="card principle"><div class="p-ico">${icon(p.icon)}</div><h3>${esc(p.title)}</h3><p>${esc(p.body)}</p></article>`).join("")}
-    </div>
-  </div>
-</section>
-
-<section class="section section--alt">
-  <div class="wrap">
-    ${sectionHead({ eyebrow: "Companies", title: "A portfolio built from operating experience", lead: "Our companies serve homeowners, commercial operators and enterprises in markets where reliability, responsiveness and execution matter." })}
-    <div class="grid grid-3" data-stagger>${featured.map((c, i) => companyCard(c, "f" + i)).join("")}</div>
-    <p style="margin-top:1.8rem"><a class="btn btn-ghost" href="/companies">See all ${publishedCompanies.length} companies ${icon("arrow","icon")}</a></p>
-  </div>
-</section>
-
-<section class="section">
-  <div class="wrap">
-    ${sectionHead({ eyebrow: "Operating model", title: "Local accountability. Shared capability.", lead: "Our companies keep their customer relationships, specialist teams and market identities. The Group provides centralized infrastructure in finance, procurement, people, technology, marketing, analytics and strategy.", center: true })}
-    <div class="diagram-wrap" data-reveal>${platformDiagram()}</div>
-    <p class="center" style="margin-top:1.6rem"><a class="textlink" href="/operating-model">Why the parent exists ${icon("arrow","icon")}</a></p>
-  </div>
-</section>
-
-<section class="section section--cool">
-  <div class="wrap">
-    ${sectionHead({ eyebrow: "Investment philosophy", title: "We invest where operating expertise matters", lead: "We evaluate businesses and opportunities where disciplined operations, technology, centralized support and patient ownership can create long-term value." })}
-    <div class="modes" data-reveal>${modes}</div>
-    <p style="margin-top:1.6rem"><a class="textlink" href="/investments">How we invest ${icon("arrow","icon")}</a></p>
-  </div>
-</section>
-
-<section class="section section--dark">
-  <div class="wrap split split--wide">
-    <div data-reveal>
-      <p class="eyebrow">International</p>
-      <h2 class="h2">Canadian by origin. Selective about where we go next.</h2>
-      <p class="lead">As the Group grows, we evaluate selected international markets where our operating capabilities can be paired with skilled people, strong local partners and supportive business environments. We study before we commit — and we welcome dialogue with investment-promotion agencies and technology parks.</p>
-      <p style="margin-top:1.5rem"><a class="btn btn-onDark" href="/international">International opportunities ${icon("arrow","icon")}</a></p>
-    </div>
-    <div data-reveal="right">${reachSVG()}</div>
-  </div>
-</section>
-
-<section class="section">
-  <div class="wrap">
-    ${sectionHead({ eyebrow: "Leadership", title: "Operators you can actually meet", lead: "The Group is run by people who have built and operated field-service businesses in British Columbia." })}
-    <div class="exec-strip" data-stagger>${execStrip}</div>
-    <p style="margin-top:1.6rem"><a class="textlink" href="/leadership">Meet the leadership team ${icon("arrow","icon")}</a> &nbsp;·&nbsp; <a class="textlink" href="/governance">Board &amp; governance ${icon("arrow","icon")}</a></p>
-  </div>
-</section>
-
-<section class="section section--alt">
-  <div class="wrap">
-    ${sectionHead({ eyebrow: "Newsroom", title: "Latest from X Group" })}
-    <div class="grid grid-3" data-stagger>
-      ${newsroom.slice(0, 3).map(n => `<a class="card news-card" href="/news/${n.slug}">
-        <span class="news-type">${esc(n.type)} · ${esc(n.dateLabel)}</span>
-        <h3>${esc(n.title)}</h3>
-        <p>${esc(n.summary)}</p>
-        <span class="textlink">Read ${icon("arrow","icon-xs")}</span>
-      </a>`).join("")}
-    </div>
-    <p style="margin-top:1.8rem"><a class="btn btn-ghost" href="/news">Visit the newsroom ${icon("arrow","icon")}</a></p>
-  </div>
-</section>
-
-${ctaBand({
-  title: "Let's talk.",
-  body: "Whether you're a homeowner researching one of our brands, a business owner considering a long-term home, a supplier, or an investment-promotion agency — there's a direct line for you.",
-  actions: `<a class="btn btn-onDark" href="/contact">Contact the Group ${icon("arrow","icon")}</a>
-            <a class="btn btn-lineDark" href="/companies">Our companies</a>`,
-})}
-`;
-  // small extra styles for the two home-only mini components
-  const extra = `<style>
-    .exec-mini,.exec-strip>div{display:flex;align-items:center;gap:.85rem}
-    .exec-strip{display:flex;flex-wrap:wrap;gap:1.4rem 2rem}
-    .exec-strip .exec-avatar{width:56px;height:56px;border-radius:50%}
-    .exec-strip b{font-family:var(--font-display);font-size:1.02rem;display:block}
-    .exec-strip span{font-size:.83rem;color:var(--ink-soft)}
-  </style>`;
-  return page({
-    title: "Home", path: "/",
-    description: `${group.legalName} is a Canadian operating holding company that builds, acquires and supports essential-service and technology businesses. Based in Vancouver, BC.`,
-    jsonld: [siteGraph()],
-    preloadImage: "/assets/img/hero-field-service.webp",
-    main: extra + main,
-  });
-}
+function home() { return pages.home(ctx); }
 
 // ---------------------------------------------------------------- GROUP
 function groupPage() {
@@ -362,201 +195,16 @@ ${ctaBand({ title: "Understand the operating model", body: "See how a shared pla
 }
 
 // ---------------------------------------------------------------- COMPANIES (index)
-function companiesPage() {
-  const byCat = categories.map(cat => {
-    const list = publishedCompanies.filter(c => c.category === cat.key);
-    if (!list.length) return "";
-    return `<div class="cat-block" data-reveal>
-      <div class="cat-head">
-        <h2>${esc(cat.key)}</h2>
-        <span class="cat-count">${list.length} ${list.length === 1 ? "company" : "companies"}</span>
-        <p class="cat-blurb">${esc(cat.blurb)}</p>
-      </div>
-      <div class="grid grid-3" data-stagger>${list.map((c, i) => companyCard(c, cat.key.slice(0,2) + i)).join("")}</div>
-    </div>`;
-  }).join("");
-
-  const wall = publishedCompanies.map((c) => {
-    const media = siteShot(c)
-      ? siteShotImg(c, "wall-shot")
-      : `<span class="wall-mono" style="--tint:${c.tint}">${esc(c.monogram)}</span>`;
-    return `<a class="wall-tile${siteShot(c) ? "" : " wall-tile--mono"}" href="/companies/${c.slug}">
-      ${media}
-      <span class="wall-scrim" aria-hidden="true"></span>
-      <span class="wall-label"><b>${esc(c.name)}</b><span class="wall-sector">${esc(c.category)}</span></span>
-    </a>`;
-  }).join("");
-
-  const main = `
-<section class="page-hero page-hero--wall">
-  <div class="wrap">
-    ${crumb([{ name: "Home", href: "/" }, { name: "Companies" }])}
-    <p class="eyebrow">Portfolio</p>
-    <h1>Our companies</h1>
-    <p class="lead">${publishedCompanies.length} operating companies and brands — essential home services, industrial field services and technology. Each keeps its own local identity; the Group carries the shared infrastructure.</p>
-  </div>
-  <div class="wrap wall" data-stagger aria-label="All ${group.brandName} companies">${wall}</div>
-</section>
-<section class="section"><div class="wrap">
-  ${byCat}
-  <p class="note" style="margin-top:2.5rem;font-size:.87rem;color:var(--ink-faint);background:var(--surface-2);border-left:3px solid var(--brand-line);padding:.9rem 1.1rem;border-radius:0 8px 8px 0;max-width:75ch">Relationship labels are deliberately precise. “Operating brand” means a trade name and website operated under a Group company; “Group operating company” means a company the Group owns and operates; “Technology affiliate” denotes a strategic technology relationship. See <a href="/corporate-information">Corporate information</a>.</p>
-</div></section>
-${ctaBand({ title: "Own an established business?", body: "We consider acquisitions of established Canadian businesses where the team, customers and reputation deserve a long-term home.",
-  actions: `<a class="btn btn-onDark" href="/investments">How we invest ${icon("arrow","icon")}</a><a class="btn btn-lineDark" href="/contact#acquisitions">Talk to us</a>` })}
-`;
-  return page({ title: "Companies", path: "/companies",
-    description: `The ${group.brandName} portfolio: ${publishedCompanies.length} operating companies and brands across essential services, industrial field services and technology in British Columbia and beyond.`,
-    jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Companies", href: "/companies" }])], main });
-}
+function companiesPage() { return pages.companiesPage(ctx); }
 
 // ---------------------------------------------------------------- COMPANY DETAIL
-function companyDetail(c) {
-  const cells = [
-    ["Relationship", c.relationshipLabel],
-    ["Sector", c.category],
-    ["Principal market", c.geography.join(", ")],
-    c.founded ? ["Established", String(c.founded)] : null,
-    ["Website", `<a href="${c.website}" target="_blank" rel="noopener">${esc(c.domain)} ${icon("ext","icon-xs")}</a>`],
-  ].filter(Boolean).map(([k, v]) => `<div class="cell"><div class="k">${esc(k)}</div><div class="v">${k === "Website" ? v : esc(v)}</div></div>`).join("");
-  const metricsHtml = (c.metrics && c.metrics.length)
-    ? `<div class="co-detail-meta">${c.metrics.map(m => `<div class="cell"><div class="k">${esc(m.label)}</div><div class="v">${esc(m.value)}</div></div>`).join("")}</div>` : "";
-  const body = c.long.map(p => `<p>${esc(p)}</p>`).join("");
-
-  const main = `
-<section class="page-hero page-hero--detail"><div class="wrap co-detail-hero">
-  <div class="co-detail-main">
-    ${crumb([{ name: "Home", href: "/" }, { name: "Companies", href: "/companies" }, { name: c.name }])}
-    <div class="co-detail-head" style="margin-top:.5rem">
-      ${monogramTile(c, "d")}
-      <div>
-        <span class="co-relationship" style="background:rgba(255,255,255,.14);color:#dbe8ef">${esc(c.relationshipLabel)}</span>
-        <h1 style="margin-top:.5rem">${esc(c.name)}</h1>
-        <p class="lead" style="margin-top:.6rem">${esc(c.tagline)}</p>
-      </div>
-    </div>
-  </div>
-  ${siteShot(c) ? `<a class="co-detail-shot" href="${c.website}" target="_blank" rel="noopener" data-reveal="right">
-    <span class="co-detail-shot-bar" aria-hidden="true"><i></i><i></i><i></i><em>${esc(c.domain)}</em></span>
-    ${siteShotImg(c, "co-detail-shot-img")}
-  </a>` : `<div class="co-detail-shot co-detail-shot--mono" style="--tint:${c.tint}" data-reveal="right" aria-hidden="true">
-    <span class="co-detail-shot-bar"><i></i><i></i><i></i><em>${esc(c.domain)}</em></span>
-    <span class="co-detail-mono">${esc(c.monogram)}</span>
-  </div>`}
-</div></section>
-
-<section class="section"><div class="wrap" style="max-width:840px">
-  <div class="co-detail-meta">${cells}</div>
-  ${metricsHtml}
-  <div class="measure" style="max-width:70ch">${body}</div>
-
-  <div class="poc">
-    <div class="who"><b>${esc(c.poc.name)}</b><span>${esc(c.poc.role)}, ${esc(c.name)}</span></div>
-    <div class="contact">${icon("mail","icon-xs")} ${mail(c.poc.email)}</div>
-  </div>
-
-  <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.8rem">
-    <a class="btn btn-solid" href="${c.website}" target="_blank" rel="noopener">Visit ${esc(c.domain)} ${icon("ext","icon")}</a>
-    <a class="btn btn-ghost" href="/companies">All companies</a>
-  </div>
-  <p style="margin-top:1.6rem;color:var(--ink-faint);font-size:.9rem">${esc(c.name)} is an operating ${c.relationship === "strategic-investment" ? "affiliate" : "business"} within ${esc(group.brandName)}.</p>
-</div></section>
-`;
-  const ld = {
-    "@context": "https://schema.org", "@type": "Organization", name: c.name, url: c.website,
-    parentOrganization: { "@type": "Organization", name: group.legalName, url: group.baseUrl + "/" },
-    areaServed: c.geography, disambiguatingDescription: c.relationshipLabel,
-  };
-  return page({ title: c.name, path: `/companies/${c.slug}`,
-    description: `${c.name} — ${c.relationshipLabel} within ${group.brandName}. ${c.short}`,
-    jsonld: [ld, breadcrumb([{ name: "Home", href: "/" }, { name: "Companies", href: "/companies" }, { name: c.name, href: `/companies/${c.slug}` }])], main });
-}
+function companyDetail(c) { return pages.companyDetail(ctx, c); }
 
 // ---------------------------------------------------------------- OPERATING MODEL
-function operatingModelPage() {
-  const caps = capabilities.map(c => `<article class="card cap" data-reveal>${icon(c.icon)}<h3>${esc(c.title)}</h3><p>${esc(c.body)}</p></article>`).join("");
-  const main = `
-${pageHero("operating-model", `
-  ${crumb([{ name: "Home", href: "/" }, { name: "Operating model" }])}
-  <p class="eyebrow">Operating model</p>
-  <h1>Local accountability. Shared capability.</h1>
-  <p class="lead">Our companies retain their customer relationships, specialist teams and market identities. The Group provides centralized infrastructure — and that is precisely why the parent exists.</p>`)}
-
-<section class="section"><div class="wrap">
-  <div class="diagram-wrap" data-reveal>${platformDiagram()}</div>
-  <p class="center measure" style="margin:1.4rem auto 0;color:var(--ink-soft)">Decentralized customer ownership; centralized administrative leverage. Each brand answers the phone and does the work; the Group carries the overhead that benefits from scale.</p>
-</div></section>
-
-<section class="section section--alt"><div class="wrap">
-  ${sectionHead({ eyebrow: "Group capabilities", title: "Seven capabilities we run centrally" })}
-  <div class="grid grid-3" data-stagger>${caps}</div>
-</div></section>
-
-<section class="section"><div class="wrap split split--wide">
-  <div data-reveal>
-    <p class="eyebrow">Why it works</p>
-    <h2 class="h2">Lower overhead. Better execution. Better data.</h2>
-    <p>A single garage-door brand does not need its own finance department, procurement function or technology stack. It needs to answer the phone, show up and do excellent work. Everything else is overhead a shared platform can carry better and cheaper.</p>
-    <p>When one platform sits beneath many lean brands, advantages compound: lower overhead per brand, more consistent execution, and far better data — patterns visible across markets that no single brand could see. That data flows back into scheduling, pricing, marketing and the decision about what to build or buy next.</p>
-  </div>
-  <div class="diagram-wrap" data-reveal="right">${capitalFlowDiagram()}</div>
-</div></section>
-
-${ctaBand({ title: "See the portfolio the model supports", body: `${operatingBrandsCount} operating brands across three sectors, all running on the same shared infrastructure.`,
-  actions: `<a class="btn btn-onDark" href="/companies">Our companies ${icon("arrow","icon")}</a><a class="btn btn-lineDark" href="/investments">Investment philosophy</a>` })}
-`;
-  return page({ title: "Operating model", path: "/operating-model",
-    preloadImage: heroPreload("operating-model"),
-    description: `How ${group.brandName} works: a shared platform of finance, procurement, people, technology, growth, operations and strategy beneath lean local operating brands.`,
-    jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Operating model", href: "/operating-model" }])], main });
-}
+function operatingModelPage() { return pages.operatingModelPage(ctx); }
 
 // ---------------------------------------------------------------- INVESTMENTS
-function investmentsPage() {
-  const modes = investmentModes.map(m => `<div class="mode"><b>${esc(m.verb)}</b><p>${esc(m.body)}</p></div>`).join("");
-  const auds = investmentAudiences.map(a => `<article class="card" data-reveal>
-      <h3 style="font-size:1.2rem">${esc(a.title)}</h3>
-      <p style="color:var(--ink-soft);margin:.7rem 0 1.1rem">${esc(a.body)}</p>
-      <a class="textlink" href="/contact#${a.cta.emailKey}">${esc(a.cta.label)} ${icon("arrow","icon")}</a>
-    </article>`).join("");
-  const main = `
-${pageHero("investments", `
-  ${crumb([{ name: "Home", href: "/" }, { name: "Investments" }])}
-  <p class="eyebrow">Investments</p>
-  <h1>We are operators first</h1>
-  <p class="lead">We are interested in businesses where ownership, operating discipline and shared infrastructure can create value over a long time horizon.</p>`)}
-
-<section class="section"><div class="wrap">
-  <div class="modes" data-reveal>${modes}</div>
-</div></section>
-
-<section class="section section--cool"><div class="wrap">
-  ${sectionHead({ eyebrow: "Who we talk to", title: "Three conversations we welcome" })}
-  <div class="grid grid-3" data-stagger>${auds}</div>
-</div></section>
-
-<section class="section"><div class="wrap split split--wide">
-  <div data-reveal>
-    <p class="eyebrow">Our areas of interest</p>
-    <h2 class="h2">Where our capabilities give us an advantage</h2>
-    <p>Essential services, industrial and field services, specialized B2B services, technology-enabled operations and adjacent categories where our existing platform provides an edge.</p>
-    <p style="color:var(--ink-faint);font-size:.92rem">We do not describe ourselves as a private-equity firm, fund or institutional investor. We are an operator-led group that deploys its own capital and operating expertise. Metrics on this site are kept conservative and dated; we publish figures only once we can stand behind them.</p>
-  </div>
-  <ul class="vlist" data-reveal="right">
-    <li>${icon("build")}<span><b>Essential & home services</b> — the category we know best.</span></li>
-    <li>${icon("gear")}<span><b>Industrial & field services</b> — mission-critical, mobile, recurring.</span></li>
-    <li>${icon("cpu")}<span><b>Technology-enabled operations</b> — software and applied AI that scale service.</span></li>
-    <li>${icon("hand")}<span><b>Adjacent B2B services</b> — where shared infrastructure lowers cost to serve.</span></li>
-  </ul>
-</div></section>
-
-${ctaBand({ title: "Considering a long-term home for your business?", body: "We move deliberately and we keep our word. Start a confidential conversation.",
-  actions: `<a class="btn btn-onDark" href="/contact#acquisitions">Business owners & acquisitions ${icon("arrow","icon")}</a>` })}
-`;
-  return page({ title: "Investments", path: "/investments",
-    preloadImage: heroPreload("investments"),
-    description: `${group.brandName} invests where operating expertise matters — acquiring, building and partnering with durable Canadian businesses, and evaluating selected international markets.`,
-    jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Investments", href: "/investments" }])], main });
-}
+function investmentsPage() { return pages.investmentsPage(ctx); }
 
 // ---------------------------------------------------------------- INTERNATIONAL
 function internationalPage() {
@@ -605,44 +253,12 @@ ${pageHero("international", `
 }
 
 // ---------------------------------------------------------------- LEADERSHIP
-function leadershipPage() {
-  const cards = executives.map((e, i) => {
-    const areas = e.areas.map(a => `<span>${esc(a)}</span>`).join("");
-    const link = e.linkedin ? `<a class="exec-link textlink" href="${e.linkedin}" target="_blank" rel="noopener">LinkedIn ${icon("ext","icon-xs")}</a>` : "";
-    const portrait = hasPortrait(e) ? portraitImg(e, "exec-photo") : avatar(e.initials, "L" + i);
-    return `<article class="exec" data-reveal>
-      ${portrait}
-      <div class="exec-body">
-        <h3>${esc(e.name)}</h3>
-        <p class="exec-role">${esc(e.title)}</p>
-        <p class="exec-bio">${esc(e.bio)}</p>
-        <div class="exec-areas">${areas}</div>
-        ${link}
-      </div>
-    </article>`;
-  }).join("");
-  const main = `
-${pageHero("leadership", `
-  ${crumb([{ name: "Home", href: "/" }, { name: "Leadership" }])}
-  <p class="eyebrow">Leadership</p>
-  <h1>The people who run the Group</h1>
-  <p class="lead">X Group is led by an executive team of operators, each accountable for a real function — strategy and capital allocation, operations, finance, technology, people, procurement and corporate development. Every leader has hands-on experience building and running field-service businesses in British Columbia.</p>`)}
-<section class="section"><div class="wrap">
-  <div class="exec-grid" data-stagger>${cards}</div>
-  <div class="lead-govern card" data-reveal>
-    <div><p class="eyebrow" style="margin-bottom:.4rem">Governance</p><h3 style="font-size:1.15rem">The Board oversees management</h3><p style="margin:.5rem 0 0;color:var(--ink-soft);max-width:60ch">A Board of Directors, an independent Chair and committee structure sit above the executive team. See how the Group is governed.</p></div>
-    <a class="btn btn-ghost" href="/governance">Governance & board ${icon("arrow","icon")}</a>
-  </div>
-  <p class="note" style="margin-top:1.5rem;font-size:.87rem;color:var(--ink-faint);background:var(--surface-2);border-left:3px solid var(--brand-line);padding:.9rem 1.1rem;border-radius:0 8px 8px 0;max-width:78ch">Portraits shown are placeholders; professional photographs and LinkedIn profiles are added as each is finalized. Biographies describe real responsibilities within the Group.</p>
-</div></section>
-${ctaBand({ title: "Talk to the team", body: "For acquisitions, partnerships, international inquiries, media or careers — reach the right person directly.",
-  actions: `<a class="btn btn-onDark" href="/contact">Contact the Group ${icon("arrow","icon")}</a><a class="btn btn-lineDark" href="/careers">Careers</a>` })}
-`;
-  return page({ title: "Leadership", path: "/leadership",
-    preloadImage: heroPreload("leadership"),
-    description: `Meet the ${group.brandName} leadership team — the executive operators responsible for strategy, finance, operations, technology, people, procurement and corporate development.`,
-    jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Leadership", href: "/leadership" }]), ...executives.map(personSchema)], main });
-}
+function leadershipPage() { return pages.leadershipPage(ctx); }
+const executivePage = (e) => pages.executivePage(ctx, e);
+const insightsPage = () => pages.insightsPage(ctx);
+const founderLetterPage = () => pages.founderLetterPage(ctx);
+const delegationsPage = () => pages.delegationsPage(ctx);
+const ruPage = () => pages.ruPage(ctx);
 
 // ---------------------------------------------------------------- NEWSROOM
 function newsroomPage() {
@@ -685,51 +301,7 @@ function newsArticle(n) {
 }
 
 // ---------------------------------------------------------------- GOVERNANCE
-function governancePage() {
-  const seats = governance.board.seats.map(s =>
-    `<div class="seat"><div class="seat-role">${esc(s.role)}</div><div class="seat-holder">${esc(s.holder)}</div><span class="seat-kind">${esc(s.kind)}</span></div>`).join("");
-  const committees = governance.committees.map(c =>
-    `<article class="card" data-reveal><h3 style="font-size:1.08rem">${esc(c.name)}</h3><p style="margin:.5rem 0 0;color:var(--ink-soft);font-size:.95rem">${esc(c.body)}</p></article>`).join("");
-  const principlesList = governance.principles.map(p => `<li>${icon("check")}<span>${esc(p)}</span></li>`).join("");
-  const policies = governance.policies.map(p => `<a class="policy-link" href="${p.href}">${icon("doc","icon")}<span>${esc(p.label)}</span>${icon("arrow","icon-xs")}</a>`).join("");
-  const resp = governance.responsibility.map(r => `<article class="card" data-reveal><h3 style="font-size:1.02rem">${esc(r.title)}</h3><p style="margin:.35rem 0 0;color:var(--ink-soft);font-size:.92rem">${esc(r.body)}</p></article>`).join("");
-  const main = `
-${pageHero("governance", `
-  ${crumb([{ name: "Home", href: "/" }, { name: "Governance" }])}
-  <p class="eyebrow">Governance</p>
-  <h1>Corporate governance</h1>
-  <p class="lead">${esc(governance.intro)}</p>`)}
-
-<section class="section"><div class="wrap split split--wide">
-  <div data-reveal>
-    <p class="eyebrow">Board of Directors</p>
-    <h2 class="h2">Oversight, separate from management</h2>
-    <p>${esc(governance.board.note)}</p>
-    <ul class="vlist" style="margin-top:1.3rem">${principlesList}</ul>
-  </div>
-  <div class="board" data-reveal="right">${seats}</div>
-</div></section>
-
-<section class="section section--alt"><div class="wrap">
-  ${sectionHead({ eyebrow: "Committees", title: "Three standing committees" })}
-  <div class="grid grid-3" data-stagger>${committees}</div>
-</div></section>
-
-<section class="section"><div class="wrap">
-  ${sectionHead({ eyebrow: "Responsibility", title: "How we operate responsibly" })}
-  <div class="grid grid-4" data-stagger>${resp}</div>
-</div></section>
-
-<section class="section section--cool"><div class="wrap">
-  ${sectionHead({ eyebrow: "Policies", title: "Our published policy framework", lead: "Summaries are published here; full policies are provided to counterparties on request." })}
-  <div class="policy-grid" data-stagger>${policies}</div>
-</div></section>
-`;
-  return page({ title: "Governance", path: "/governance",
-    preloadImage: heroPreload("governance"),
-    description: `${group.brandName}'s corporate governance — Board of Directors, Audit & Risk, Governance & Nominating and Investment committees, and a published policy framework (Code of Conduct, anti-bribery, sanctions).`,
-    jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Governance", href: "/governance" }])], main });
-}
+function governancePage() { return pages.governancePage(ctx); }
 
 // ---------------------------------------------------------------- CAREERS
 function careersPage() {
@@ -793,88 +365,10 @@ ${pageHero("faq", `
 }
 
 // ---------------------------------------------------------------- CONTACT
-function contactPage() {
-  const channels = contactChannels.map(ch => `<article class="channel" id="${ch.key}" data-reveal>
-      <h3>${icon("mail")}${esc(ch.label)}</h3>
-      <p>${esc(ch.note)}</p>
-      ${mail(ch.email)}
-    </article>`).join("");
-  const main = `
-${pageHero("contact", `
-  ${crumb([{ name: "Home", href: "/" }, { name: "Contact" }])}
-  <p class="eyebrow">Contact</p>
-  <h1>The right line for every purpose</h1>
-  <p class="lead">We route inquiries to the part of the Group that actually handles them — not a single anonymous inbox.</p>`)}
-<section class="section"><div class="wrap">
-  <div class="channels" data-stagger>${channels}</div>
-  <div class="card" style="margin-top:1.6rem;display:flex;gap:1.2rem;flex-wrap:wrap;align-items:center;justify-content:space-between" data-reveal>
-    <div>
-      <p class="eyebrow" style="margin-bottom:.4rem">Head office</p>
-      <p style="margin:0;font-weight:600;font-size:1.05rem">${esc(group.headquarters)}</p>
-    </div>
-    <div style="display:flex;gap:.7rem;flex-wrap:wrap">
-      <a class="btn btn-ghost" href="tel:${group.phoneE164}">${icon("phone","icon")} ${esc(group.phoneDisplay)}</a>
-      <a class="btn btn-solid" href="mailto:${group.emails.general}">${icon("mail","icon")} ${esc(group.emails.general)}</a>
-    </div>
-  </div>
-</div></section>
-`;
-  return page({ title: "Contact", path: "/contact",
-    preloadImage: heroPreload("contact"),
-    description: `Contact ${group.brandName} — direct lines for general inquiries, business owners and acquisitions, international and government relations, suppliers, careers and media.`,
-    jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Contact", href: "/contact" }])], main });
-}
+function contactPage() { return pages.contactPage(ctx); }
 
 // ---------------------------------------------------------------- GROUP PROFILE
-function groupProfilePage() {
-  const facts = metrics.items.map(m => `<div class="cell"><div class="k">${esc(m.label)}</div><div class="v">${esc(m.value)}</div></div>`).join("");
-  const list = publishedCompanies.map(c => `<li><b>${esc(c.name)}</b> — <span style="color:var(--ink-soft)">${esc(c.relationshipLabel)}, ${esc(c.category)}, ${esc(c.geography.join(", "))}</span></li>`).join("");
-  const execList = executives.map(e => `<li><b>${esc(e.name)}</b> — ${esc(e.title)}</li>`).join("");
-  const main = `
-${pageHero("group-profile", `
-  ${crumb([{ name: "Home", href: "/" }, { name: "Group profile" }])}
-  <p class="eyebrow">One-page overview</p>
-  <h1>Group profile</h1>
-  <p class="lead">A concise overview of ${esc(group.legalName)} — the page to share with a bank, a lawyer, a counterparty or an investment agency.</p>
-  <p style="margin-top:1rem"><a class="btn btn-onDark" href="javascript:window.print()">${icon("arrow","icon")} Print / save as PDF</a></p>`)}
-<section class="section"><div class="wrap" style="max-width:860px">
-  <div class="doc">
-    <h2 style="margin-top:0">Who we are</h2>
-    <p>${esc(group.legalName)} (“${esc(group.brandName)}”) is a ${esc(group.descriptor)} based in ${esc(group.headquarters)}. We build, acquire and support businesses across essential services, industrial field services and technology. Local brands, central operating infrastructure, disciplined capital allocation.</p>
-
-    <h2>At a glance</h2>
-    <div class="co-detail-meta" style="margin-top:.5rem">${facts}</div>
-    <p style="font-size:.85rem;color:var(--ink-faint)">Figures as of ${esc(metrics.asOf)}.</p>
-
-    <h2>Operating model</h2>
-    <p>Centralized group services — finance, procurement, people, technology, growth, operations and strategy — support lean operating brands that keep their own customers, teams and local identity.</p>
-
-    <h2>Portfolio</h2>
-    <ul class="bullets" style="list-style:none">${list}</ul>
-
-    <h2>Leadership</h2>
-    <ul class="bullets" style="list-style:none">${execList}</ul>
-
-    <h2>International interests</h2>
-    <p>Shared services, technology and AI operations, operating partnerships, acquisitions and specialized field services in selected markets. We engage investment-promotion agencies and technology parks as a Canadian company conducting genuine exploratory diligence, following our anti-bribery and sanctions policies.</p>
-
-    <h2>Contact</h2>
-    <div class="deflist">
-      <dt>General</dt><dd>${mail(group.emails.general)}</dd>
-      <dt>Acquisitions</dt><dd>${mail(group.emails.acquisitions)}</dd>
-      <dt>International</dt><dd>${mail(group.emails.international)}</dd>
-      <dt>Head office</dt><dd>${esc(group.headquarters)}</dd>
-      <dt>Web</dt><dd><a href="/">${esc(group.domain)}</a></dd>
-    </div>
-    <p class="note">Some values on this profile are provisional and will be replaced with verified corporate-registry information before formal outreach.</p>
-  </div>
-</div></section>
-`;
-  return page({ title: "Group profile", path: "/group-profile",
-    preloadImage: heroPreload("group-profile"),
-    description: `A one-page overview of ${group.legalName}: who we are, our operating model, portfolio, leadership, international interests and contacts.`,
-    jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Group profile", href: "/group-profile" }])], main });
-}
+function groupProfilePage() { return pages.groupProfilePage(ctx); }
 
 // ---------------------------------------------------------------- DOC PAGES (legal/compliance)
 function docPage(slug, data) {
@@ -1015,10 +509,10 @@ ErrorDocument 404 /404.html
 console.log("Building " + group.brandName + " site…");
 
 // clean previously generated html (leave assets/_build/.git)
-for (const f of ["index.html","group.html","operating-model.html","investments.html","international.html","leadership.html","governance.html","careers.html","faq.html","contact.html","group-profile.html","corporate-information.html","privacy.html","terms.html","code-of-conduct.html","anti-bribery.html","sanctions.html","404.html"]) {
+for (const f of ["index.html","group.html","operating-model.html","investments.html","international.html","leadership.html","governance.html","careers.html","faq.html","contact.html","group-profile.html","corporate-information.html","privacy.html","terms.html","code-of-conduct.html","anti-bribery.html","sanctions.html","accessibility.html","security.html","delegations.html","404.html"]) {
   const p = join(ROOT, f); if (existsSync(p)) rmSync(p);
 }
-for (const d of ["companies","insights","news"]) {
+for (const d of ["companies","insights","news","leadership","ru"]) {
   if (existsSync(join(ROOT, d))) rmSync(join(ROOT, d), { recursive: true });
 }
 
@@ -1029,23 +523,31 @@ for (const c of publishedCompanies) emit(`companies/${c.slug}.html`, companyDeta
 emit("operating-model.html", operatingModelPage());
 emit("investments.html", investmentsPage());
 emit("international.html", internationalPage());
-emit("leadership.html", leadershipPage());
+emit("delegations.html", delegationsPage());
+emit("leadership/index.html", leadershipPage());
+for (const e of executives) emit(`leadership/${e.slug}.html`, executivePage(e));
 emit("governance.html", governancePage());
 emit("careers.html", careersPage());
 emit("faq.html", faqPage());
 emit("news/index.html", newsroomPage());
 for (const n of newsroom) emit(`news/${n.slug}.html`, newsArticle(n));
+emit("insights/index.html", insightsPage());
+emit(`insights/${founderLetter.slug}.html`, founderLetterPage());
 emit("contact.html", contactPage());
 emit("group-profile.html", groupProfilePage());
 for (const [slug, data] of Object.entries(corporatePages)) emit(`${slug}.html`, docPage(slug, data));
+emit("ru/index.html", ruPage());
 emit("404.html", notFound());
 
 // infra
 const routes = ["/","/group","/companies", ...publishedCompanies.map(c => `/companies/${c.slug}`),
-  "/operating-model","/investments","/international","/leadership","/governance","/careers","/faq","/news",
+  "/operating-model","/investments","/international","/delegations",
+  "/leadership", ...executives.map(e => `/leadership/${e.slug}`),
+  "/governance","/careers","/faq","/news",
   ...newsroom.map(n => `/news/${n.slug}`),
+  "/insights", `/insights/${founderLetter.slug}`,
   "/contact","/group-profile","/corporate-information","/code-of-conduct","/anti-bribery","/sanctions",
-  "/privacy","/terms","/accessibility","/security"];
+  "/privacy","/terms","/accessibility","/security","/ru/"];
 // RFC 9116 vulnerability-disclosure pointer (Contact + Expires required).
 const expires = new Date(Date.now() + 364 * 24 * 3600 * 1000).toISOString().replace(/\.\d+Z$/, "Z");
 emit(".well-known/security.txt", `Contact: mailto:${group.emails.security}

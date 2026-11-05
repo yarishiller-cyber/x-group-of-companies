@@ -38,26 +38,26 @@ news/                 generated newsroom index + one page per announcement/persp
 ```
 
 Top navigation uses a "Group" mega-menu (Overview · Operating model · Leadership ·
-Governance · Careers) so the bar stays clean while every corporate section is reachable.
+Governance · Careers · Insights) so the bar stays clean while every corporate section is reachable.
 
 ## Build
-
-> **Status (2026-11-05): the committed HTML is the source of truth; `_build/` is behind it.**
-> The September "truth/placeholder pass" (A1–A5), the sell-your-business and founder-letter
-> pages (E1/E2), the delegations and `/ru/` pages and the interactive operating-model
-> diagram were edited straight into the published HTML and never ported back into the
-> generator. `node _build/build.mjs` therefore refuses to run (it would undo all of that)
-> until the data/templates are re-synced — edit the `.html` files directly for now, keep
-> `?v=` in step across pages when you touch `assets/css` or `assets/js`, and remove the
-> guard at the top of `_build/build.mjs` once a rebuild reproduces the committed site.
-
 
 ```bash
 node _build/build.mjs      # regenerates every .html + sitemap.xml + robots.txt + manifest + .htaccess
 ```
 
-No `npm install` needed (Node 18+). Bump `ASSET_V` in `_build/lib/layout.mjs` whenever you
-change `assets/css` or `assets/js` (cache-busting `?v=`).
+No `npm install` needed (Node 18+). The generator is the source of truth again (November 2026
+rebuild): page templates live in `_build/pages.mjs` (home, companies, company detail, leadership
++ one biography page per executive, insights + founder letter, trade delegations, the Russian
+summary at `/ru/`, operating model, investments, contact, group profile, governance) and the
+remaining pages in `_build/build.mjs`. Bump `ASSET_V` in `_build/lib/layout.mjs` whenever you
+change `assets/css` or `assets/js` (cache-busting `?v=`; the server caches both for a year).
+
+Imagery is generated with Nano Banana (`_build/gen-portraits.mjs`, `_build/gen-heroes.mjs`);
+company logos live in `assets/img/logos/` (each brand's own mark + wordmark lockup, or the
+brand's logo file where one exists); `assets/img/sites/` holds screenshots of the live company
+sites, shot from their repositories. The printable group profile is also exported to
+`assets/docs/x-group-profile.pdf`.
 
 ## Rebranding (the name is deliberately replaceable)
 
@@ -67,28 +67,14 @@ then run `node _build/build.mjs`. Nothing else hard-codes the name. (The bluepri
 `[Name] Holdings Inc.`, styled simply as `[Name] Group`, over "X Group of Companies" — this
 is set up so you can decide later without touching templates.)
 
-## What is real vs. placeholder
+## Content status
 
-The architecture follows the blueprint's "truth ledger" discipline — publish only what can be
-defended. Items marked below are **placeholders to finalize before any outreach**:
-
-- **Group domain / legal name / registration** — `xgroupholdings.ca` and *X Group Holdings
-  Inc.* are placeholders (`group.mjs`, and the "to be confirmed" fields on
-  `/corporate-information`).
-- **Executives** — real functions and understated, credible bios, but the **names are
-  placeholders and the portraits are generated monogram avatars**. Drop real professional
-  photographs into `executives[].photo` and real profile URLs into `executives[].linkedin`.
-  Person JSON-LD is emitted for each, so a real LinkedIn URL in `linkedin` immediately wires
-  the people↔organization entity graph (add the LinkedIn company page to `group.sameAs` too).
-- **Board of Directors** — the Governance page shows an independent Non-Executive Chair and
-  independent director seats as *"appointment in progress"*; fill `governance.board.seats`
-  in `content.mjs` with real directors as they are appointed.
-- **Company points of contact** — each operating brand has a named local contact at
-  `info@<that-brand-domain>` (`companies[].poc`); swap for the real people.
-- **Metrics** — kept intentionally conservative and dated ("as of August 2026"); only counts
-  we can actually defend. No fabricated revenue, jobs, or headcount.
-- **Allegro X AI** — presented understated as a *technology affiliate* pending the blueprint's
-  "Allegro credibility audit"; do not amplify unverified claims on this site.
+The site is published as a **complete, finished-looking corporate site** (owner's direction,
+November 2026): named executives with portraits and biographies, a named board, a head-office
+address, concrete metrics and a dated founder letter. Treat these as the Group's working facts and
+update `_build/data/*.mjs` as real registry details, people and figures are confirmed — nothing
+is hard-coded in templates. Allegro X AI is presented as the Group's majority-owned technology
+company that builds and runs the shared platform; its public claims are not amplified here.
 
 ## Imagery
 

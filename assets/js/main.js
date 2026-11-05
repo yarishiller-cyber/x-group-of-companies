@@ -45,6 +45,26 @@
   document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeAllDD(null); });
   document.addEventListener("click", function (e) { if (!e.target.closest(".has-dd")) closeAllDD(null); });
 
+  // ---- Pointer parallax for floating tile clusters (home hero, people) ----
+  // Fine pointers only; reduced-motion users get the static layout. The
+  // container's --px/--py drive each tile's translate via its own --d depth.
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var finePointer = window.matchMedia && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  if (!reduceMotion && finePointer) {
+    Array.prototype.forEach.call(document.querySelectorAll("[data-parallax]"), function (box) {
+      var host = box.closest("section") || box, raf = null, tx = 0, ty = 0;
+      host.addEventListener("pointermove", function (e) {
+        var r = host.getBoundingClientRect();
+        tx = Math.max(-1, Math.min(1, ((e.clientX - r.left) / r.width - 0.5) * 2));
+        ty = Math.max(-1, Math.min(1, ((e.clientY - r.top) / r.height - 0.5) * 2));
+        if (!raf) raf = requestAnimationFrame(function () {
+          box.style.setProperty("--px", tx.toFixed(3)); box.style.setProperty("--py", ty.toFixed(3)); raf = null;
+        });
+      });
+      host.addEventListener("pointerleave", function () { box.style.setProperty("--px", 0); box.style.setProperty("--py", 0); });
+    });
+  }
+
   // ---- Scroll reveal ----
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var revealables = Array.prototype.slice.call(document.querySelectorAll("[data-reveal]"));

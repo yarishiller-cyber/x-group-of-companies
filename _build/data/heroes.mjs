@@ -173,4 +173,24 @@ export const heroes = {
       "texture, deep blue-slate shadows, calm and contractual, macro focus on " +
       "the nib",
   },
+  home: {
+    alt: "Vancouver's downtown skyline and Burrard Inlet at blue hour, the port lights reflected on calm water.",
+    prompt: "Vancouver's downtown skyline and Burrard Inlet at blue hour seen from the water, deep harbour-blue sky and sea, city and port lights as soft bokeh, calm reflections, North Shore mountains as dark silhouettes, very dark and quiet toward the left half of the frame",
+  },
+  companies: {
+    alt: "Aerial view at golden hour over Greater Vancouver's tree-lined neighbourhoods stretching toward the coastal mountains.",
+    prompt: "Aerial view at golden hour over Greater Vancouver's tree-lined residential neighbourhoods, rooftops and quiet streets stretching toward the coastal mountains, soft atmospheric haze, a sense of many communities side by side",
+  },
+  insights: {
+    alt: "A quiet desk by a tall window over Vancouver harbour at dawn: a fountain pen resting on handwritten pages.",
+    prompt: "A quiet executive desk beside a tall window overlooking Vancouver harbour at dawn: a fountain pen resting on a few handwritten pages, writing out of focus, a cup of coffee, soft directional morning light",
+  },
+  delegations: {
+    alt: "A boardroom high in a Vancouver office tower prepared for a visiting delegation, harbour and mountains beyond the glass.",
+    prompt: "A modern boardroom high in a Vancouver office tower prepared for a visiting delegation: a long dark-wood table with water glasses and closed leather folders, a wall of windows showing the harbour, cranes and mountains in soft morning light",
+  },
+  allegro: {
+    alt: "A technology studio in a converted brick loft in Montréal, engineers at standing desks with screens of abstract dashboards.",
+    prompt: "A clean modern technology studio in a converted brick loft in Montréal: standing desks with multiple monitors showing only abstract blurred dashboards, a few engineers working with their backs to the camera, warm pendant lights against cool window light",
+  },
 };

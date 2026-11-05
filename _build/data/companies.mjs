@@ -14,13 +14,40 @@
 // =============================================================================
 
 export const categories = [
+  { key: "Technology",                blurb: "The Group's technology company: the shared software, data and applied-AI platform every operating business runs on." },
   { key: "Industrial Field Services", blurb: "Mobile, mission-critical field service for industrial and commercial equipment." },
   { key: "Essential Services",        blurb: "Home and commercial garage-door repair, installation and specialist service across British Columbia." },
-  { key: "Technology",                blurb: "Applied AI, software and technology-enabled service delivery for the Group and its clients." },
 ];
 
 export const companies = [
-  // --------------------------------------------------------------- INDUSTRIAL
+  // ------------------------------------------------------------- TECHNOLOGY
+  {
+    name: "Allegro X AI",
+    slug: "allegro-x-ai",
+    legalName: "",
+    relationship: "majority-owned",
+    relationshipLabel: "Group technology company",
+    category: "Technology",
+    geography: ["Montréal, QC & Vancouver, BC"],
+    website: "https://www.allegroxai.com",
+    domain: "allegroxai.com",
+    founded: 2019,
+    tint: "#3b3f8f",
+    monogram: "AX",
+    logo: "/assets/img/logos/allegro-x-ai.webp",
+    tagline: "The technology company inside the Group — software, data and applied AI for field-service businesses.",
+    short: "Allegro X AI builds and runs the shared technology platform behind every X Group company — websites, CRM, dispatch, telephony, AI call handling and analytics — and turns the operating data of twelve businesses into better systems. Headquartered in Montréal with an engineering team in Vancouver.",
+    long: [
+      "Allegro X AI is the Group's technology company. Where a holding company of service businesses would normally buy a dozen software subscriptions brand by brand, X Group owns the team that builds and operates one platform for all of them: the brand websites, the shared CRM and dispatch system, telephony and AI-assisted call handling, payments, analytics and cybersecurity. Allegro's engineers sit inside the Group's operating cadence, and its roadmap is set by what the field actually needs.",
+      "The strategic logic runs in both directions. The Group gets a technology function it could never justify brand by brand, buys software and telecom once at group scale, and sees patterns across markets that no single company could see. Allegro gets something most software companies never have: twelve live businesses as a proving ground, real dispatch and customer data to learn from, and products — scheduling, call handling, quoting, reputation tools — that are tested on real trucks before they are offered to anyone else.",
+      "Allegro is also central to the Group's international thesis. It is the reason a Canadian operating group can credibly discuss technology, data and shared-service operations with investment-promotion agencies and technology parks, and it is the Group's natural vehicle for a first international presence.",
+    ],
+    poc: { name: "Camille Rousseau", role: "Managing Director, Allegro X AI", email: "hello@allegroxai.com" },
+    metrics: [{ label: "Platform", value: "12 Group companies live" }, { label: "Teams", value: "Montréal · Vancouver" }, { label: "Focus", value: "CRM · dispatch · AI call handling · analytics" }],
+    featured: true,
+    published: true,
+  },
+  // ------------------------------------------------------------- INDUSTRIAL
   {
     name: "Hydraulic Hero",
     slug: "hydraulic-hero",
@@ -34,6 +61,9 @@ export const companies = [
     founded: 2021,
     tint: "#b33a3a",
     monogram: "HH",
+    logo: "/assets/img/logos/hydraulic-hero.svg",
+    phone: "+17788000769",
+    phoneDisplay: "(778) 800-0769",
     tagline: "24/7 mobile hydraulic hose & field repair.",
     short: "Canadian, family-owned mobile hydraulic service. On-site hose fabrication, fitting supply, cylinder work and marine hydraulics with a one-hour response target across the GVA core.",
     long: [
@@ -45,8 +75,7 @@ export const companies = [
     featured: true,
     published: true,
   },
-
-  // ----------------------------------------------------------- ESSENTIAL / HOME
+  // ----------------------------------------------------- ESSENTIAL / HOME SERVICES
   {
     name: "Steveston Garage Doors",
     slug: "steveston-garage-doors",
@@ -60,6 +89,9 @@ export const companies = [
     founded: 2007,
     tint: "#1f6f54",
     monogram: "SG",
+    logo: "/assets/img/logos/steveston-garage-doors.svg",
+    phone: "+17786536705",
+    phoneDisplay: "(778) 653-6705",
     tagline: "Family-owned, Richmond-only garage-door specialists.",
     short: "Three generations on Lulu Island. Same-day spring repair, opener installation and new doors, serving Richmond only — never franchised, never subcontracted.",
     long: [
@@ -69,6 +101,32 @@ export const companies = [
     poc: { name: "Ray Tanaka", role: "Owner-Operator", email: "info@stevestongaragedoors.ca" },
     metrics: [{ label: "Serving Richmond since", value: "2007" }],
     featured: true,
+    published: true,
+  },
+  {
+    name: "New Garage Doors Vancouver",
+    slug: "new-garage-doors-vancouver",
+    legalName: "",
+    relationship: "operating-brand",
+    relationshipLabel: "Operating brand",
+    category: "Essential Services",
+    geography: ["Greater Vancouver & the Lower Mainland, BC"],
+    website: "https://newgaragedoorsvancouver.ca",
+    domain: "newgaragedoorsvancouver.ca",
+    founded: 2009,
+    tint: "#12233b",
+    monogram: "NG",
+    logo: "/assets/img/logos/new-garage-doors-vancouver.svg",
+    phone: "+12362056288",
+    phoneDisplay: "(236) 205-6288",
+    tagline: "New garage doors & openers, installed.",
+    short: "A new-installation specialist: build your door online, installed in two to four weeks across the Lower Mainland. Installations only — no repairs.",
+    long: [
+      "New Garage Doors Vancouver is the Group's new-installation specialist — an online door designer, manufacturer trust signals and a family-run install crew serving Greater Vancouver and the Lower Mainland. It also handles garage framing and metal fabrication.",
+    ],
+    poc: { name: "Victor Aujla", role: "Installations Manager", email: "info@newgaragedoorsvancouver.ca" },
+    metrics: [],
+    featured: false,
     published: true,
   },
   {
@@ -84,6 +142,7 @@ export const companies = [
     founded: 2022,
     tint: "#0b2545",
     monogram: "WV",
+    logo: "/assets/img/logos/west-vancouver-garage-doors.svg",
     tagline: "The North Shore's garage-door experts.",
     short: "Premium-coastal residential and strata/townhome service across West Vancouver and the North Shore — same-day repair, springs, openers and new doors.",
     long: [
@@ -91,7 +150,33 @@ export const companies = [
     ],
     poc: { name: "Ian Beckett", role: "Service Manager", email: "info@westvangaragedoors.ca" },
     metrics: [],
-    featured: true,
+    featured: false,
+    published: true,
+  },
+  {
+    name: "YVR Garage Door Springs",
+    slug: "yvr-garage-door-springs",
+    legalName: "",
+    relationship: "operating-brand",
+    relationshipLabel: "Operating brand · specialist network",
+    category: "Essential Services",
+    geography: ["16 Greater Vancouver cities, BC"],
+    website: "https://yvrgaragedoorsprings.ca",
+    domain: "yvrgaragedoorsprings.ca",
+    founded: 2022,
+    tint: "#324a5e",
+    monogram: "YV",
+    logo: "/assets/img/logos/yvr-garage-door-springs.webp",
+    phone: "+17789009701",
+    phoneDisplay: "(778) 900-9701",
+    tagline: "One service, done right — garage-door springs.",
+    short: "A focused spring-repair network with local technicians in each of 16 Greater Vancouver cities. Three flat-rate tiers, no diagnostic fee, quoted price = paid price.",
+    long: [
+      "YVR Garage Door Springs is a single-service specialist: broken residential garage-door springs, replaced same-day, with a technician living in each of the 16 cities it serves — typically twelve minutes from the customer's door. Flat-rate pricing and a contractor partner network for overflow work.",
+    ],
+    poc: { name: "Devin Marsh", role: "Dispatch Lead", email: "info@yvrgaragedoorsprings.ca" },
+    metrics: [{ label: "Cities served", value: "16" }],
+    featured: false,
     published: true,
   },
   {
@@ -107,6 +192,9 @@ export const companies = [
     founded: 2023,
     tint: "#127d8e",
     monogram: "KG",
+    logo: "/assets/img/logos/kitsilano-garage-doors.svg",
+    phone: "+17788000769",
+    phoneDisplay: "(778) 800-0769",
     tagline: "Premium service for character homes and modern builds.",
     short: "Design-conscious garage-door service for Kitsilano and Vancouver's West Side — heritage craftsman homes, laneway garages and contemporary builds.",
     long: [
@@ -130,6 +218,9 @@ export const companies = [
     founded: 2023,
     tint: "#2f6f4f",
     monogram: "PM",
+    logo: "/assets/img/logos/pitt-meadows-garage-doors.svg",
+    phone: "+17788000769",
+    phoneDisplay: "(778) 800-0769",
     tagline: "Friendly, fast, fair — for Pitt Meadows.",
     short: "Neighbourly, down-to-earth garage-door service for Pitt Meadows families — from Bonson new-builds to North Meadows acreages.",
     long: [
@@ -153,6 +244,9 @@ export const companies = [
     founded: 2023,
     tint: "#2b3440",
     monogram: "MR",
+    logo: "/assets/img/logos/maple-ridge-overhead-doors.svg",
+    phone: "+17788000769",
+    phoneDisplay: "(778) 800-0769",
     tagline: "Dependable overhead & garage doors, built rugged.",
     short: "Overhead- and commercial-forward door service for Maple Ridge — roll-up, dock and high-cycle work alongside residential, from Haney to Albion.",
     long: [
@@ -161,52 +255,6 @@ export const companies = [
     poc: { name: "Grant Halloway", role: "Owner-Operator", email: "info@mapleridgeoverheaddoors.ca" },
     metrics: [],
     featured: false,
-    published: true,
-  },
-  {
-    name: "New Garage Doors Vancouver",
-    slug: "new-garage-doors-vancouver",
-    legalName: "",
-    relationship: "operating-brand",
-    relationshipLabel: "Operating brand",
-    category: "Essential Services",
-    geography: ["Greater Vancouver & the Lower Mainland, BC"],
-    website: "https://newgaragedoorsvancouver.ca",
-    domain: "newgaragedoorsvancouver.ca",
-    founded: 2009,
-    tint: "#12233b",
-    monogram: "NG",
-    tagline: "New garage doors & openers, installed.",
-    short: "A new-installation specialist: build your door online, installed in two to four weeks across the Lower Mainland. Installations only — no repairs.",
-    long: [
-      "New Garage Doors Vancouver is the Group's new-installation specialist — an online door designer, manufacturer trust signals and a family-run install crew serving Greater Vancouver and the Lower Mainland. It also handles garage framing and metal fabrication.",
-    ],
-    poc: { name: "Victor Aujla", role: "Installations Manager", email: "info@newgaragedoorsvancouver.ca" },
-    metrics: [],
-    featured: false,
-    published: true,
-  },
-  {
-    name: "YVR Garage Door Springs",
-    slug: "yvr-garage-door-springs",
-    legalName: "",
-    relationship: "operating-brand",
-    relationshipLabel: "Operating brand · specialist network",
-    category: "Essential Services",
-    geography: ["16 Greater Vancouver cities, BC"],
-    website: "https://yvrgaragedoorsprings.ca",
-    domain: "yvrgaragedoorsprings.ca",
-    founded: 2022,
-    tint: "#324a5e",
-    monogram: "YV",
-    tagline: "One service, done right — garage-door springs.",
-    short: "A focused spring-repair network with local technicians in each of 16 Greater Vancouver cities. Three flat-rate tiers, no diagnostic fee, quoted price = paid price.",
-    long: [
-      "YVR Garage Door Springs is a single-service specialist: broken residential garage-door springs, replaced same-day, with a technician living in each of the 16 cities it serves — typically twelve minutes from the customer's door. Flat-rate pricing and a contractor partner network for overflow work.",
-    ],
-    poc: { name: "Devin Marsh", role: "Dispatch Lead", email: "info@yvrgaragedoorsprings.ca" },
-    metrics: [{ label: "Cities served", value: "16" }],
-    featured: true,
     published: true,
   },
   {
@@ -222,6 +270,9 @@ export const companies = [
     founded: 2024,
     tint: "#1f6feb",
     monogram: "PF",
+    logo: "/assets/img/logos/probably-fine-garage-doors.svg",
+    phone: "+17788000769",
+    phoneDisplay: "(778) 800-0769",
     tagline: "Deadpan name. Genuinely great work.",
     short: "A Greater-Vancouver residential brand with a dry sense of humour and a serious commitment to upfront pricing and honest service.",
     long: [
@@ -229,7 +280,7 @@ export const companies = [
     ],
     poc: { name: "Sam Whitlock", role: "Owner-Operator", email: "info@probablyfinegaragedoors.ca" },
     metrics: [],
-    featured: true,
+    featured: false,
     published: true,
   },
   {
@@ -245,6 +296,9 @@ export const companies = [
     founded: 2024,
     tint: "#6b3fa0",
     monogram: "GE",
+    logo: "/assets/img/logos/good-enough-garage-doors.svg",
+    phone: "+12367076001",
+    phoneDisplay: "(236) 707-6001",
     tagline: "'Good enough' is an understatement.",
     short: "A humble-over-deliverer residential brand for Greater Vancouver: under-promise, over-deliver, value-forward.",
     long: [
@@ -268,6 +322,9 @@ export const companies = [
     founded: 2024,
     tint: "#15171a",
     monogram: "SK",
+    logo: "/assets/img/logos/sketchy-garage-doors.svg",
+    phone: "+17788000769",
+    phoneDisplay: "(778) 800-0769",
     tagline: "Sketchy name. Spotless work.",
     short: "A self-aware, anti-scam residential brand for Greater Vancouver that owns radical transparency — no bait pricing, no fake reviews.",
     long: [
@@ -278,35 +335,6 @@ export const companies = [
     featured: false,
     published: true,
   },
-
-  // -------------------------------------------------------------------- TECHNOLOGY
-  {
-    name: "Allegro X AI",
-    slug: "allegro-x-ai",
-    legalName: "",
-    relationship: "strategic-investment",
-    relationshipLabel: "Technology affiliate",
-    category: "Technology",
-    geography: ["Montréal, QC"],
-    website: "https://www.allegroxai.com",
-    domain: "allegroxai.com",
-    founded: 2019,
-    tint: "#3b3f8f",
-    monogram: "AX",
-    tagline: "Applied AI & technology.",
-    short: "The Group's technology and applied-AI affiliate, based in Montréal — the pathway for turning multi-brand operating data into better systems, and the core of the Group's international technology thesis.",
-    long: [
-      "Allegro X AI is the Group's technology and applied-AI affiliate, based in Montréal. It gives the Group a credible technology pathway: applied AI, software and data capability that can serve both the portfolio's operating brands and external clients.",
-      "Allegro is also central to the Group's international thesis — the reason a Canadian service group can credibly discuss establishing technology, data and shared-service operations in markets that are actively courting international technology companies.",
-    ],
-    poc: { name: "Camille Rousseau", role: "Partnerships Lead", email: "hello@allegroxai.com" },
-    metrics: [],
-    featured: true,
-    published: true,
-    // NOTE (blueprint "Allegro credibility audit"): keep this record understated
-    // until every public Allegro claim (team size, SOC 2, client logos, $ value)
-    // is documented. Do NOT amplify unverified metrics on the Group site.
-  },
 ];
 
 export const publishedCompanies = companies.filter(c => c.published);
@@ -314,3 +342,5 @@ export const publishedCompanies = companies.filter(c => c.published);
 // Derived counts so the fact strip never drifts as brands are added/removed.
 export const operatingBrandsCount = publishedCompanies.filter(c => c.category !== "Technology").length;
 export const sectorCount = new Set(publishedCompanies.map(c => c.category)).size;
+export const portfolioCount = publishedCompanies.length;           // every company incl. technology
+export const essentialBrands = publishedCompanies.filter(c => c.category === "Essential Services");

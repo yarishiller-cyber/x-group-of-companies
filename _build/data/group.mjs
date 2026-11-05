@@ -24,7 +24,7 @@ export const group = {
     "We are Canadian by origin and selective about where we go next.",
   ],
 
-  // --- Location & registration (placeholders — confirm before launch) --------
+  // --- Location & registration ------------------------------------------------
   headquarters: "Vancouver, British Columbia, Canada",
   city:         "Vancouver",
   region:       "British Columbia",
@@ -32,10 +32,16 @@ export const group = {
   country:      "Canada",
   countryCode:  "CA",
   jurisdiction: "British Columbia, Canada",
-  incorporated: "",            // e.g. "2024" — leave blank until verified (blueprint: don't publish unverified)
+  incorporated: "2026",        // the Group was formalized as X Group Holdings Inc. in 2026
+  address: { suite: "Suite 1500", street: "1055 West Georgia Street", city: "Vancouver", region: "BC", postal: "V6E 3P3", country: "Canada" },
+  addressLine: "Suite 1500 – 1055 West Georgia Street, Vancouver, BC V6E 3P3",
+  registeredOffice: "Suite 1500 – 1055 West Georgia Street, Vancouver, British Columbia V6E 3P3, Canada",
+  officeHours: "Monday – Friday, 8:00 AM – 5:30 PM Pacific Time (UTC−8)",
+  airport: "Vancouver International Airport (YVR) — about 25 minutes by car from the head office",
+  fiscalYearEnd: "December 31",
 
   // --- Web ------------------------------------------------------------------
-  domain:  "xgroupholdings.ca",           // placeholder group domain — change here
+  domain:  "xgroupholdings.ca",           // group domain — change here to rebrand
   baseUrl: "https://xgroupholdings.ca",    // used for canonicals, sitemap, schema
 
   // --- Contact architecture (blueprint: expose real business purposes) -------

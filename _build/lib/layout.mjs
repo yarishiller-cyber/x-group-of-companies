@@ -6,7 +6,7 @@ import { primaryNav, footerNav } from "../data/site.mjs";
 import { publishedCompanies } from "../data/companies.mjs";
 import { markSVG, icon } from "./assets.mjs";
 
-export const ASSET_V = "4"; // bump when CSS/JS change (cache-busting ?v=)
+export const ASSET_V = "5"; // bump when CSS/JS change (cache-busting ?v=)
 
 export function esc(s = "") {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -16,7 +16,7 @@ export const ORG_ID = group.baseUrl + "/#organization";
 const SITE_ID = group.baseUrl + "/#website";
 
 // ---- <head> ---------------------------------------------------------------
-export function head({ title, description, path, ogImage = "/assets/og/x-group-og.png", jsonld = [], preloadImage }) {
+export function head({ title, description, path, ogImage = "/assets/og/x-group-og.png", jsonld = [], preloadImage, lang = "en", alternates = [] }) {
   const canonical = abs(path);
   const fullTitle = path === "/"
     ? `${group.brandName} — ${group.descriptor}`
@@ -25,8 +25,9 @@ export function head({ title, description, path, ogImage = "/assets/og/x-group-o
   const preload = preloadImage
     ? `<link rel="preload" as="image" href="${preloadImage}" fetchpriority="high">`
     : "";
+  const alt = alternates.map(a => `<link rel="alternate" hreflang="${a.lang}" href="${esc(abs(a.href))}">`).join("\n");
   return `<!doctype html>
-<html lang="en">
+<html lang="${lang}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -34,6 +35,7 @@ export function head({ title, description, path, ogImage = "/assets/og/x-group-o
 <title>${esc(fullTitle)}</title>
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${esc(canonical)}">
+${alt}
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 <meta name="theme-color" content="#0c2a3a">
 <meta name="format-detection" content="telephone=no">
@@ -129,7 +131,7 @@ export function footer() {
           ${markSVG("ftr", 40)}
           <span class="brand-word">${esc(group.brandName)}</span>
         </a>
-        <p class="foot-desc">${esc(group.descriptor)}.<br>${esc(group.headquarters)}.</p>
+        <p class="foot-desc">${esc(group.descriptor)}.<br>${esc(group.addressLine)}.</p>
         <p class="foot-creed">${esc(group.slogan)}</p>
       </div>
       <div class="foot-cols">${cols}</div>
@@ -147,17 +149,19 @@ export function footer() {
         <li><a href="/terms">Terms</a></li>
         <li><a href="/accessibility">Accessibility</a></li>
         <li><a href="/security">Security</a></li>
+        <li><a href="/ru/" hreflang="ru" lang="ru" title="Краткая информация на русском языке">RU</a></li>
       </ul>
     </div>
-    <p style="font-size:.8rem;color:#6f7d8a;margin:1rem 0 0;line-height:1.4">${esc(group.legalName)} <span class="tbp">[TO BE PROVIDED: exact registered legal name]</span> · Incorporated in ${esc(group.jurisdiction)} · Registration No. <span class="tbp">[TO BE PROVIDED: BC incorporation number]</span> · Registered office: <span class="tbp">[TO BE PROVIDED: street address]</span></p>
+    <p class="foot-registry">${esc(group.legalName)} · Incorporated in ${esc(group.jurisdiction)} · Registered office: ${esc(group.registeredOffice)} · Official correspondence: Adrian Cole, Managing Director &amp; Chief Executive</p>
     <p class="foot-disclaimer">This website is provided for information about ${esc(group.brandName)} and its operating companies. It is not an offer of securities or a solicitation of investment. Figures marked provisional are being verified.</p>
   </div>
 </footer>`;
 }
 
 // ---- Full page shell ------------------------------------------------------
-export function page({ title, description, path, ogImage, jsonld, bodyClass = "", main, preloadImage }) {
-  return `${head({ title, description, path, ogImage, jsonld, preloadImage })}
+export function page({ title, description, path, ogImage, jsonld, bodyClass = "", main, preloadImage, lang, alternates, scripts = [] }) {
+  const extraScripts = scripts.map(s => `<script src="${s}?v=${ASSET_V}" defer></script>`).join("\n");
+  return `${head({ title, description, path, ogImage, jsonld, preloadImage, lang, alternates })}
 <body class="${bodyClass}">
 ${header(path)}
 <main id="main">
@@ -165,6 +169,7 @@ ${main}
 </main>
 ${footer()}
 <script src="/assets/js/main.js?v=${ASSET_V}" defer></script>
+${extraScripts}
 </body>
 </html>`;
 }
@@ -217,9 +222,10 @@ export function siteGraph() {
           "@type": "PostalAddress", addressLocality: group.city, addressRegion: group.regionCode, addressCountry: group.countryCode,
         }},
         address: {
-          "@type": "PostalAddress",
+          "@type": "PostalAddress", streetAddress: group.address.suite + " – " + group.address.street, postalCode: group.address.postal,
           addressLocality: group.city, addressRegion: group.regionCode, addressCountry: group.countryCode,
         },
+        foundingDate: group.incorporated || undefined,
         areaServed: [{ "@type": "Country", name: "Canada" }],
         knowsAbout: group.sectors,
         contactPoint: contactPoints,
@@ -247,6 +253,9 @@ export function personSchema(exec) {
     jobTitle: exec.title,
     worksFor: { "@id": ORG_ID },
     knowsAbout: exec.areas,
+    url: exec.slug ? group.baseUrl + "/leadership/" + exec.slug : undefined,
+    image: exec.photo ? group.baseUrl + exec.photo : undefined,
+    description: exec.summary,
     sameAs: exec.linkedin ? [exec.linkedin] : undefined,
   };
 }
@@ -274,7 +283,7 @@ export function articleSchema(p, section, isNews) {
     articleSection: section,
     author: { "@id": ORG_ID },
     publisher: { "@id": ORG_ID },
-    mainEntityOfPage: group.baseUrl + `/news/${p.slug}`,
+    mainEntityOfPage: group.baseUrl + (p.path || `/news/${p.slug}`),
   };
 }
 

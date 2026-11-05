@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 80" width="360" height="80" role="img" aria-label="Hydraulic Hero logo">
+  <rect width="360" height="80" fill="none"/>
+  <g transform="translate(6,12)">
+    <path d="M28 2 L52 12 L52 30 Q52 50 28 56 Q4 50 4 30 L4 12 Z" fill="#d94f1e" stroke="#0f1720" stroke-width="1.5"/>
+    <path d="M16 18 L16 42 M40 18 L40 42 M16 30 L40 30" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M28 4 l1.5 3 l3 -.5 l-1 2.5 l2 1.5 l-2 1 l.5 2 l-3 -.5 l-1 2 l-1 -2 l-3 .5 l.5 -2 l-2 -1 l2 -1.5 l-1 -2.5 l3 .5 z" fill="#fff"/>
+  </g>
+  <g font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif" fill="#0f1720">
+    <text x="72" y="36" font-size="22" font-weight="800" letter-spacing="0.5">HYDRAULIC HERO</text>
+    <text x="72" y="58" font-size="11" font-weight="700" fill="#d94f1e" letter-spacing="2">100% CANADIAN · 24/7 VANCOUVER</text>
+  </g>
+</svg>
