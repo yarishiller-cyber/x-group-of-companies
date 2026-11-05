@@ -344,16 +344,16 @@ ${ctaBand({ title: "Own an established business?", body: "We consider acquisitio
 // ---------------------------------------------------------------- COMPANY DETAIL
 export function companyDetail(ctx, c) {
   const { group, publishedCompanies, allegroAngle, esc, icon, page, crumb, breadcrumb, siteShot, siteShotImg, mail, ctaBand } = ctx;
-  const cells = [
-    ["Relationship", c.relationshipLabel],
-    ["Sector", c.category],
-    ["Principal market", c.geography.join(", ")],
+  const factRows = [
+    ["Relationship", esc(c.relationshipLabel)],
+    ["Sector", esc(c.category)],
+    ["Principal market", esc(c.geography.join(", "))],
     c.founded ? ["Founded", String(c.founded)] : null,
     c.phoneDisplay ? ["Telephone", `<a href="tel:${c.phone}">${esc(c.phoneDisplay)}</a>`] : null,
-    ["Website", `<a href="${c.website}" target="_blank" rel="noopener">${esc(c.domain)} ${icon("ext","icon-xs")}</a>`],
-  ].filter(Boolean).map(([k, v]) => `<div class="cell"><div class="k">${esc(k)}</div><div class="v">${k === "Website" || k === "Telephone" ? v : esc(v)}</div></div>`).join("");
-  const metricsHtml = (c.metrics && c.metrics.length)
-    ? `<div class="co-detail-meta">${c.metrics.map(m => `<div class="cell"><div class="k">${esc(m.label)}</div><div class="v">${esc(m.value)}</div></div>`).join("")}</div>` : "";
+    ["Website", `<a href="${c.website}" target="_blank" rel="noopener"><span>${esc(c.domain)}</span> ${icon("ext","icon-xs")}</a>`, "wide"],
+  ].filter(Boolean).map(([k, v, cls]) => `<div${cls ? ` class="${cls}"` : ""}><dt>${esc(k)}</dt><dd>${v}</dd></div>`).join("");
+  const highlights = (c.metrics && c.metrics.length)
+    ? `<div class="co-facts-hl"><p class="eyebrow">Highlights</p><dl>${c.metrics.map(m => `<div><dt>${esc(m.label)}</dt><dd>${esc(m.value)}</dd></div>`).join("")}</dl></div>` : "";
   const body = c.long.map(p => `<p>${esc(p)}</p>`).join("");
   const isAllegro = c.slug === "allegro-x-ai";
   const frame = siteShot(c)
@@ -398,23 +398,30 @@ export function companyDetail(ctx, c) {
   ${frame}
 </div></section>
 
-<section class="section"><div class="wrap" style="max-width:860px">
-  <div class="co-detail-meta">${cells}</div>
-  ${metricsHtml}
-  <div class="measure" style="max-width:70ch">${body}</div>
-
-  <div class="poc">
-    <div class="who"><b>${esc(c.poc.name)}</b><span>${esc(c.poc.role)}</span></div>
-    <div class="contact">${icon("mail","icon-xs")} ${mail(c.poc.email)}${c.phoneDisplay ? `<br>${icon("phone","icon-xs")} <a href="tel:${c.phone}">${esc(c.phoneDisplay)}</a>` : ""}</div>
+<section class="section"><div class="wrap co-layout">
+  <div class="co-body" data-reveal>
+    <p class="eyebrow">About</p>
+    <div class="measure" style="max-width:70ch">${body}</div>
+    <p style="margin-top:1.6rem;color:var(--ink-faint);font-size:.9rem">${esc(c.name)} is ${isAllegro ? "the technology company" : "an operating business"} within ${esc(group.brandName)}.</p>
+    <p class="eyebrow" style="margin:2.2rem 0 .6rem">Also in the Group</p>
+    <div class="co-related">${related.map(x => `<a href="/companies/${x.slug}">${companyLogo(ctx, x, "")}${esc(x.name)}</a>`).join("")}</div>
   </div>
-
-  <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.8rem">
-    <a class="btn btn-solid" href="${c.website}" target="_blank" rel="noopener">Visit ${esc(c.domain)} ${icon("ext","icon")}</a>
-    <a class="btn btn-ghost" href="/companies">All companies</a>
-  </div>
-  <p style="margin-top:1.6rem;color:var(--ink-faint);font-size:.9rem">${esc(c.name)} is ${isAllegro ? "the technology company" : "an operating business"} within ${esc(group.brandName)}.</p>
-  <p class="eyebrow" style="margin:2.2rem 0 .4rem">Also in the Group</p>
-  <div class="co-related">${related.map(x => `<a href="/companies/${x.slug}">${companyLogo(ctx, x, "")}${esc(x.name)}</a>`).join("")}</div>
+  <aside class="co-aside" data-reveal="right">
+    <div class="card co-facts">
+      <p class="eyebrow">At a glance</p>
+      <dl>${factRows}</dl>
+      ${highlights}
+      <div class="co-facts-poc">
+        <p class="eyebrow" style="margin-bottom:.5rem">Local contact</p>
+        <b>${esc(c.poc.name)}</b><span>${esc(c.poc.role)}</span>
+        <a class="email" href="mailto:${esc(c.poc.email)}">${esc(c.poc.email)}</a>
+      </div>
+      <div class="co-facts-actions">
+        <a class="btn btn-solid" href="${c.website}" target="_blank" rel="noopener">Visit website ${icon("ext","icon")}</a>
+        <a class="btn btn-ghost" href="/companies">All companies</a>
+      </div>
+    </div>
+  </aside>
 </div></section>
 ${allegroSection}
 ${ctaBand({ title: isAllegro ? "Technology, data and AI for service businesses" : "Working with the Group", body: isAllegro ? "Allegro X AI works with the Group's companies first — and with selected external clients and partners." : "Suppliers, partners and prospective team members can reach the right part of the Group directly.",
