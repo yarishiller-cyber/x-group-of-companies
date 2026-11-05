@@ -18,6 +18,26 @@ import { heroes } from "./data/heroes.mjs";
 import { page, esc, siteGraph, breadcrumb, personSchema, faqSchema, articleSchema, orgRef, ORG_ID, ASSET_V } from "./lib/layout.mjs";
 import { icon, avatar, monogramTile, platformDiagram, capitalFlowDiagram, reachSVG, faviconSVG } from "./lib/assets.mjs";
 
+// ---------------------------------------------------------------------------
+// ⚠ STALE GENERATOR GUARD (added 2026-11-05). The committed HTML is currently the
+// source of truth. Since the 2026-09-03 "truth/placeholder pass" (directives A1–A5),
+// the E1/E2 pages and the interactive operating-model diagram were hand-edited into
+// the published HTML and never ported back into these data/templates. Running the
+// generator as-is would: resurrect eight placeholder-named executives with portraits
+// and bios on /leadership (the directives call that the site's biggest liability),
+// delete /insights + the founder letter, revert the sell-your-business /investments
+// page, drop the hreflang + /ru/ wiring and the home/contact/corporate-information
+// truth edits, and remove the capmap diagram. Port those into _build/data + build.mjs
+// first (see docs/DESIGN-DIRECTIVES-2026-08.md), verify `git diff` is clean, then
+// delete this guard. To run anyway:  XG_FORCE_BUILD=1 node _build/build.mjs
+// ---------------------------------------------------------------------------
+if (process.env.XG_FORCE_BUILD !== "1") {
+  console.error("✗ Refusing to build: _build/ is behind the published HTML (see the STALE GENERATOR GUARD note in _build/build.mjs).");
+  console.error("  Running it would overwrite the 2026-09-03 truth pass, delete /insights and revert /investments.");
+  console.error("  Edit the committed .html directly for now, or set XG_FORCE_BUILD=1 once the generator has been re-synced.");
+  process.exit(1);
+}
+
 // Small shared partial: a soft note/callout box.
 const noteBox = (html) => `<p class="note">${html}</p>`;
 

@@ -37,6 +37,7 @@ export const footerNav = [
       { label: "Our companies",   href: "/companies" },
       { label: "Investments",     href: "/investments" },
       { label: "International",    href: "/international" },
+      { label: "Delegations",     href: "/delegations" },
       { label: "Group profile",   href: "/group-profile" },
     ],
   },

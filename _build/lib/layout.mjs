@@ -6,7 +6,7 @@ import { primaryNav, footerNav } from "../data/site.mjs";
 import { publishedCompanies } from "../data/companies.mjs";
 import { markSVG, icon } from "./assets.mjs";
 
-export const ASSET_V = "3"; // bump when CSS/JS change (cache-busting ?v=)
+export const ASSET_V = "4"; // bump when CSS/JS change (cache-busting ?v=)
 
 export function esc(s = "") {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -139,7 +139,7 @@ export function footer() {
       <div class="foot-companies-list">${companyLinks}</div>
     </div>
     <div class="foot-legal">
-      <p>© ${year} ${esc(group.legalName)}. All rights reserved.</p>
+      <p>© ${year} ${esc(group.legalName.replace(/\.$/, ""))}. All rights reserved.</p>
       <ul>
         <li><a href="/corporate-information">Corporate information</a></li>
         <li><a href="/governance">Governance</a></li>
@@ -149,6 +149,7 @@ export function footer() {
         <li><a href="/security">Security</a></li>
       </ul>
     </div>
+    <p style="font-size:.8rem;color:#6f7d8a;margin:1rem 0 0;line-height:1.4">${esc(group.legalName)} <span class="tbp">[TO BE PROVIDED: exact registered legal name]</span> · Incorporated in ${esc(group.jurisdiction)} · Registration No. <span class="tbp">[TO BE PROVIDED: BC incorporation number]</span> · Registered office: <span class="tbp">[TO BE PROVIDED: street address]</span></p>
     <p class="foot-disclaimer">This website is provided for information about ${esc(group.brandName)} and its operating companies. It is not an offer of securities or a solicitation of investment. Figures marked provisional are being verified.</p>
   </div>
 </footer>`;

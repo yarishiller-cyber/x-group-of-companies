@@ -42,6 +42,16 @@ Governance · Careers) so the bar stays clean while every corporate section is r
 
 ## Build
 
+> **Status (2026-11-05): the committed HTML is the source of truth; `_build/` is behind it.**
+> The September "truth/placeholder pass" (A1–A5), the sell-your-business and founder-letter
+> pages (E1/E2), the delegations and `/ru/` pages and the interactive operating-model
+> diagram were edited straight into the published HTML and never ported back into the
+> generator. `node _build/build.mjs` therefore refuses to run (it would undo all of that)
+> until the data/templates are re-synced — edit the `.html` files directly for now, keep
+> `?v=` in step across pages when you touch `assets/css` or `assets/js`, and remove the
+> guard at the top of `_build/build.mjs` once a rebuild reproduces the committed site.
+
+
 ```bash
 node _build/build.mjs      # regenerates every .html + sitemap.xml + robots.txt + manifest + .htaccess
 ```
