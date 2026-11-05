@@ -9,6 +9,10 @@
 // single entry point; this file only renders.
 // =============================================================================
 
+import { territoryMap, territoryLegend, flywheel as flywheelSVG, reachMap as reachMapSVG, REACH } from "./lib/territory.mjs";
+export const flywheel = flywheelSVG;
+export const reachMap = reachMapSVG;
+
 const LINKEDIN_ICON = "linkedin";
 
 // ---------------------------------------------------------------- shared bits
@@ -139,7 +143,7 @@ const execCardHTML = (ctx, e) => {
 // ---------------------------------------------------------------- HOME
 export function home(ctx) {
   const { group, publishedCompanies, metrics, investmentModes, principles, executives, newsroom, allegroAngle, founderLetter,
-          esc, icon, page, siteGraph, sectionHead, ctaBand, reachSVG, heroes } = ctx;
+          esc, icon, page, siteGraph, sectionHead, ctaBand, heroes } = ctx;
   const featured = publishedCompanies.filter(c => c.featured);
   const facts = metrics.items.map(m =>
     `<div class="fact"><b>${esc(m.value)}</b><span class="fact-label">${esc(m.label)}</span><span class="fact-note">${esc(m.note)}</span></div>`).join("");
@@ -201,7 +205,7 @@ export function home(ctx) {
     ${sectionHead({ eyebrow: "The portfolio", title: "Twelve companies. One platform.", lead: "A technology company, an industrial field-service company and ten local garage-door brands — each with its own name, team and customers, all running on the Group's shared infrastructure." })}
     ${logoGrid(ctx, publishedCompanies)}
     <div class="grid grid-3" data-stagger style="margin-top:2rem">${featured.map(c => companyCard(ctx, c)).join("")}</div>
-    <p style="margin-top:1.8rem"><a class="btn btn-ghost" href="/companies">See all ${publishedCompanies.length} companies ${icon("arrow","icon")}</a></p>
+    <p style="margin-top:1.8rem;display:flex;gap:.8rem 1.6rem;flex-wrap:wrap;align-items:center"><a class="btn btn-ghost" href="/companies">See all ${publishedCompanies.length} companies ${icon("arrow","icon")}</a><a class="textlink" href="/companies#how-they-fit">How twelve companies share one market ${icon("arrow","icon")}</a></p>
   </div>
 </section>
 
@@ -224,15 +228,18 @@ ${capmapSection(ctx, { compact: true })}
   </div>
 </section>
 
-<section class="section section--dark">
-  <div class="wrap split split--wide">
-    <div data-reveal>
-      <p class="eyebrow">International</p>
-      <h2 class="h2">Canadian by origin. Selective about where we go next.</h2>
-      <p class="lead">As the Group grows, we evaluate selected international markets where our operating capabilities can be paired with skilled people, strong local partners and supportive business environments. We study before we commit — and we welcome dialogue with investment-promotion agencies and technology parks.</p>
-      <p style="margin-top:1.5rem"><a class="btn btn-onDark" href="/international">International opportunities ${icon("arrow","icon")}</a> <a class="btn btn-lineDark" href="/delegations">Trade delegations</a></p>
+<section class="section section--dark reach" data-hover-group="reach">
+  <div class="wrap">
+    <div class="split split--wide" style="align-items:end;margin-bottom:1.8rem">
+      <div data-reveal>
+        <p class="eyebrow">International</p>
+        <h2 class="h2">Canadian by origin. Selective about where we go next.</h2>
+        <p class="lead">As the Group grows, we evaluate selected international markets where our operating capabilities can be paired with skilled people, strong local partners and supportive business environments. We study before we commit — and we welcome dialogue with investment-promotion agencies and technology parks.</p>
+      </div>
+      <p style="margin:0;display:flex;gap:.6rem;flex-wrap:wrap;justify-content:flex-end" data-reveal="right"><a class="btn btn-onDark" href="/international">International opportunities ${icon("arrow","icon")}</a> <a class="btn btn-lineDark" href="/delegations">Trade delegations</a></p>
     </div>
-    <div data-reveal="right">${reachSVG()}</div>
+    <div class="reach-map-wrap" data-reveal>${reachMapSVG({ compact: true })}</div>
+    <p class="reach-note">Markets under study in Central Asia and the Caucasus; Canada is home. Nothing is ranked and no destination has been selected.</p>
   </div>
 </section>
 
@@ -300,7 +307,7 @@ export function companiesPage(ctx) {
     </div>`;
   }).join("");
   const log = [...publishedCompanies].sort((a, b) => a.founded - b.founded).map(c =>
-    `<tr><td>${c.founded}</td><td><a href="/companies/${c.slug}">${esc(c.name)}</a></td><td>${esc(c.geography[0])}</td><td>${esc(c.logNote || c.tagline)}</td></tr>`).join("");
+    `<tr><td data-th="Year">${c.founded}</td><td data-th="Company"><a href="/companies/${c.slug}">${esc(c.name)}</a></td><td data-th="Market">${esc(c.geography[0])}</td><td data-th="Note">${esc(c.logNote || c.tagline)}</td></tr>`).join("");
 
   const main = `
 ${pageHero("companies", `
@@ -313,6 +320,8 @@ ${pageHero("companies", `
   ${sectionHead({ eyebrow: "At a glance", title: "The portfolio in one view" })}
   ${logoGrid(ctx, publishedCompanies)}
 </div></section>
+
+${fitSection(ctx)}
 
 <section class="section"><div class="wrap">
   ${byCat}
@@ -375,7 +384,10 @@ export function companyDetail(ctx, c) {
 </div></section>` : "";
 
   const main = `
-<section class="page-hero page-hero--detail"><div class="wrap co-detail-hero">
+<section class="page-hero page-hero--detail page-hero--img">
+  <img class="page-hero-bg page-hero-bg--blur" src="${siteShot(c) || "/assets/img/heroes/allegro.webp"}" alt="" aria-hidden="true" width="1024" height="640" loading="eager" decoding="async">
+  <div class="page-hero-scrim" aria-hidden="true"></div>
+  <div class="wrap co-detail-hero">
   <div class="co-detail-main">
     ${crumb([{ name: "Home", href: "/" }, { name: "Companies", href: "/companies" }, { name: c.name }])}
     <div class="co-detail-logo" data-reveal>${companyLogo(ctx, c, "")}</div>
@@ -700,7 +712,7 @@ ${pageHero("home", `
 
 // ---------------------------------------------------------------- OPERATING MODEL
 export function operatingModelPage(ctx) {
-  const { group, capabilities, portfolioCount, esc, icon, page, pageHero, heroPreload, crumb, breadcrumb, sectionHead, ctaBand, capitalFlowDiagram } = ctx;
+  const { group, capabilities, portfolioCount, esc, icon, page, pageHero, heroPreload, crumb, breadcrumb, sectionHead, ctaBand } = ctx;
   const caps = capabilities.map(c => `<article class="card cap" data-reveal>${icon(c.icon)}<h3>${esc(c.title)}</h3><p>${esc(c.body)}</p></article>`).join("");
   const main = `
 ${pageHero("operating-model", `
@@ -723,7 +735,12 @@ ${capmapSection(ctx, { eyebrow: "Interactive map", title: "What each capability 
     <p>A single garage-door brand does not need its own finance department, procurement function or technology stack. It needs to answer the phone, show up and do excellent work. Everything else is overhead a shared platform can carry better and cheaper.</p>
     <p>When one platform sits beneath many lean brands, advantages compound: lower overhead per brand, more consistent execution, and far better data — patterns visible across markets that no single brand could see. That data flows back into scheduling, pricing, marketing and the decision about what to build or buy next. Allegro X AI, the Group's technology company, is the team that builds and runs that platform.</p>
   </div>
-  <div class="diagram-wrap" data-reveal="right">${capitalFlowDiagram()}</div>
+  <div data-reveal="right">${flywheelSVG()}</div>
+</div></section>
+
+<section class="section section--cool"><div class="wrap">
+  ${sectionHead({ eyebrow: "One market, twelve companies", title: "How the brands share Greater Vancouver without competing", lead: "Territory brands own a town; specialty brands do a different job metro-wide; audience brands speak to different customers. One dispatch desk routes every lead to exactly one truck." })}
+  <p><a class="btn btn-solid" href="/companies#how-they-fit">See the territory map ${icon("arrow","icon")}</a></p>
 </div></section>
 
 ${ctaBand({ title: "See the portfolio the model supports", body: `${portfolioCount} companies across three sectors, all running on the same shared infrastructure.`,
@@ -749,7 +766,7 @@ export function investmentsPage(ctx) {
     ["Your name stays on the trucks", "Your brand keeps its name and identity. Your team stays. You choose whether to stay involved or step back."],
   ].map(([h, p], i) => `<li class="tl-item"><div class="tl-year">${i + 1}</div><div class="tl-body"><h3>${h}</h3><p>${p}</p></div></li>`).join("");
   const rows = [["Ownership structure", "Customer relationships & reputation"], ["Financial & accounting systems", "Local team & management"], ["Back-office procurement", "Brand name & local presence"], ["Technology infrastructure", "Service standards & pricing"], ["Insurance, payroll & compliance", "Day-to-day operational independence"]]
-    .map(([a, b]) => `<tr><td>${esc(a)}</td><td>${esc(b)}</td></tr>`).join("");
+    .map(([a, b]) => `<tr><td data-th="What changes">${esc(a)}</td><td data-th="What stays the same">${esc(b)}</td></tr>`).join("");
   const main = `
 ${pageHero("investments", `
   ${crumb([{ name: "Home", href: "/" }, { name: "Investments" }])}
@@ -952,3 +969,60 @@ ${pageHero("governance", `
     description: `${group.brandName}'s corporate governance — Board of Directors, Audit & Risk, Governance & Nominating and Investment committees, and a published policy framework (Code of Conduct, anti-bribery, sanctions).`,
     jsonld: [breadcrumb([{ name: "Home", href: "/" }, { name: "Governance", href: "/governance" }])], main });
 }
+
+// ---------------------------------------------------------------- HOW THE COMPANIES FIT TOGETHER
+export function fitSection(ctx, { heading = true } = {}) {
+  const { publishedCompanies, esc, icon, sectionHead } = ctx;
+  const bySlug = Object.fromEntries(publishedCompanies.map(c => [c.slug, c]));
+  const rules = [
+    { icon: "pin", title: "Territory brands", body: "A town, a brand, a crew. Steveston owns Richmond; West Vancouver owns the North Shore; Kitsilano owns the West Side; Pitt Meadows and Maple Ridge each own their own town. Nobody drives into another brand's territory — the dispatch desk will not book it." },
+    { icon: "gear", title: "Specialty brands", body: "Metro-wide, but a different job. New Garage Doors Vancouver installs new doors and openers only and hands every repair call to the local brand. YVR Garage Door Springs does one thing — springs — across sixteen cities. Hydraulic Hero serves industrial and commercial equipment everywhere, a market the door brands never touch." },
+    { icon: "people", title: "Audience brands", body: "Three metro-wide repair brands that speak to different customers: Probably Fine for the value-conscious homeowner, Good Enough for the straight-talk, honest-pricing buyer, and Sketchy for the person who has been burned before and wants the anti-scam promise. Different front doors, one calendar, no double-booking." },
+  ];
+  const flows = [
+    ["Referrals", "Repair brands send new-door jobs to New Garage Doors; it sends repairs back to the territory brand; spring-only calls go to YVR."],
+    ["One dispatch desk", "Every lead is routed to exactly one company by postal code, service type and brand — territories are enforced in the system, not by goodwill."],
+    ["Shared parts & fleet", "One Richmond depot, one parts catalogue, one fleet and fuel program behind every truck."],
+    ["One platform", "Allegro X AI runs the websites, CRM, dispatch and phones for all twelve, so the Group learns from every call at once."],
+  ];
+  return `
+<section class="section section--dark" id="how-they-fit"><div class="wrap">
+  ${heading ? sectionHead({ eyebrow: "How they fit together", title: "Twelve companies, one market, no stepped-on toes", lead: "Every lead in Greater Vancouver goes to exactly one truck. The brands are separated by territory, by specialty, or by the kind of customer they speak to — and one shared dispatch desk, running on Allegro's platform, routes each call to the right company." }) : ""}
+  <div class="tmap" data-hover-group="territory">
+    <div class="tmap-map" data-reveal>${territoryMap(bySlug)}</div>
+    <div class="tmap-side" data-reveal="right">${territoryLegend(bySlug)}</div>
+  </div>
+  <div class="grid grid-3 fit-rules" data-stagger>
+    ${rules.map(r => `<article class="angle">${icon(r.icon)}<h3>${esc(r.title)}</h3><p>${esc(r.body)}</p></article>`).join("")}
+  </div>
+  <div class="fit-flows" data-reveal>
+    <p class="eyebrow" style="margin-bottom:.8rem">What flows between them</p>
+    <dl class="fit-dl">${flows.map(([k, v]) => `<div><dt>${esc(k)}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
+  </div>
+</div></section>`;
+}
+
+// ---------------------------------------------------------------- INTERNATIONAL REACH (world map)
+export function reachSection(ctx, { withMarkets = false } = {}) {
+  const { international, esc, icon } = ctx;
+  const cards = withMarkets ? international.markets.map(m => {
+    const iso = (REACH.markets.find(r => r.country === m.country) || {}).iso || "";
+    return `<article class="market" data-key="${iso}"><h3>${icon("pin")}${esc(m.country)}</h3><p>${esc(m.note)}</p></article>`;
+  }).join("") : "";
+  return `
+<section class="section section--dark section--tight reach" data-hover-group="reach"><div class="wrap">
+  <div class="reach-head">
+    <div><p class="eyebrow">Where we look</p><h2 class="h2">From Vancouver to Central Asia and the Caucasus</h2></div>
+    <ul class="reach-key" role="list">
+      <li><span class="rk rk-home"></span>Home market — Canada</li>
+      <li><span class="rk rk-market"></span>Markets under study</li>
+      <li><span class="rk rk-arc"></span>Exploratory diligence, no destination selected</li>
+    </ul>
+  </div>
+  <div class="reach-map-wrap" data-reveal>${reachMapSVG()}</div>
+  <p class="reach-note">Six markets across two regions, studied through their investment-promotion agencies and technology parks. Russia and Belarus are excluded from the program under the Group's sanctions policy; markets are not ranked.</p>
+  ${withMarkets ? `<div class="markets reach-markets" data-stagger>${cards}</div>` : ""}
+</div></section>`;
+}
+
+export { REACH };

@@ -6,7 +6,7 @@ import { primaryNav, footerNav } from "../data/site.mjs";
 import { publishedCompanies } from "../data/companies.mjs";
 import { markSVG, icon } from "./assets.mjs";
 
-export const ASSET_V = "5"; // bump when CSS/JS change (cache-busting ?v=)
+export const ASSET_V = "6"; // bump when CSS/JS change (cache-busting ?v=)
 
 export function esc(s = "") {
   return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -153,7 +153,7 @@ export function footer() {
       </ul>
     </div>
     <p class="foot-registry">${esc(group.legalName)} · Incorporated in ${esc(group.jurisdiction)} · Registered office: ${esc(group.registeredOffice)} · Official correspondence: Adrian Cole, Managing Director &amp; Chief Executive</p>
-    <p class="foot-disclaimer">This website is provided for information about ${esc(group.brandName)} and its operating companies. It is not an offer of securities or a solicitation of investment. Figures marked provisional are being verified.</p>
+    <p class="foot-disclaimer">This website is provided for information about ${esc(group.brandName)} and its operating companies. It is not an offer of securities or a solicitation of investment.</p>
   </div>
 </footer>`;
 }

@@ -153,7 +153,7 @@ ${pageHero("group", `
 
 <section class="section section--cool"><div class="wrap">
   ${sectionHead({ eyebrow: "How value compounds", title: "The economic narrative", lead: "Shared infrastructure lets lean operating brands run with lower overhead, better execution and better data. That produces cash flow — which funds disciplined capital allocation into existing companies, acquisitions and new markets.", center: true })}
-  <div class="diagram-wrap" data-reveal style="max-width:760px;margin-inline:auto">${capitalFlowDiagram()}</div>
+  <div style="max-width:880px;margin-inline:auto" data-reveal>${pages.flywheel()}</div>
 </div></section>
 
 <section class="section"><div class="wrap">
@@ -209,7 +209,7 @@ function investmentsPage() { return pages.investmentsPage(ctx); }
 // ---------------------------------------------------------------- INTERNATIONAL
 function internationalPage() {
   const areas = international.evaluateAreas.map(a => `<article class="card" data-reveal><h3 style="font-size:1.1rem">${esc(a.title)}</h3><p style="color:var(--ink-soft);margin-top:.5rem">${esc(a.body)}</p></article>`).join("");
-  const marketCards = international.markets.map(m => `<article class="market"><h3>${icon("pin")}${esc(m.country)}</h3><p>${esc(m.note)}</p></article>`).join("");
+  const marketCards = international.markets.map(m => { const iso = (pages.REACH.markets.find(r => r.country === m.country) || {}).iso || ""; return `<article class="market" data-key="${iso}"><h3>${icon("pin")}${esc(m.country)}</h3><p>${esc(m.note)}</p></article>`; }).join("");
   const tags = international.agencyTopics.map(t => `<span class="tag">${esc(t)}</span>`).join("");
   const main = `
 ${pageHero("international", `
@@ -222,7 +222,7 @@ ${pageHero("international", `
   <p>${esc(international.intro[1])}</p>
 </div></section>
 
-<section class="section section--dark section--tight"><div class="wrap">${reachSVG()}</div></section>
+${pages.reachSection(ctx)}
 
 <section class="section"><div class="wrap">
   ${sectionHead({ eyebrow: "What we evaluate", title: "Areas we study before we commit" })}
@@ -231,7 +231,7 @@ ${pageHero("international", `
 
 <section class="section section--cool"><div class="wrap">
   ${sectionHead({ eyebrow: "Markets under study", title: international.region, lead: "One of several regions we are studying. We have not selected a destination, and this page deliberately does not rank markets. Russia and Belarus are excluded from our market-entry program; see our sanctions policy." })}
-  <div class="markets" data-stagger>${marketCards}</div>
+  <div class="markets" data-stagger data-hover-group="reach">${marketCards}</div>
   <p style="margin-top:1.3rem;color:var(--ink-soft);max-width:75ch">${esc(international.canadaNote)}</p>
 </div></section>
 
@@ -284,18 +284,20 @@ function newsArticle(n) {
   const isNews = n.type === "Announcement";
   const body = n.body.map(par => `<p>${esc(par)}</p>`).join("");
   const main = `
-<section class="section"><div class="wrap">
+${pageHero("news", `
   ${crumb([{ name: "Home", href: "/" }, { name: "Newsroom", href: "/news" }, { name: n.title }])}
+  <p class="eyebrow">${esc(n.type)} · ${esc(n.dateLabel)}</p>
+  <h1>${esc(n.title)}</h1>
+  <p class="lead">${esc(n.summary)}</p>`)}
+<section class="section"><div class="wrap">
   <article class="article">
-    <p class="eyebrow">${esc(n.type)} · ${esc(n.dateLabel)}</p>
-    <h1>${esc(n.title)}</h1>
     <p class="article-meta">${esc(n.dateLabel)} · ${n.readMins} min read</p>
     ${body}
     <p style="margin-top:2rem"><a class="textlink" href="/news">${icon("arrow","icon-xs")} All news &amp; perspectives</a></p>
   </article>
 </div></section>
 `;
-  return page({ title: n.title, path: `/news/${n.slug}`, description: n.summary,
+  return page({ title: n.title, path: `/news/${n.slug}`, description: n.summary, preloadImage: heroPreload("news"),
     jsonld: [articleSchema(n, isNews ? "Announcement" : "Perspective", isNews),
              breadcrumb([{ name: "Home", href: "/" }, { name: "Newsroom", href: "/news" }, { name: n.title, href: `/news/${n.slug}` }])], main });
 }

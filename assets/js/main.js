@@ -65,6 +65,35 @@
     });
   }
 
+  // ---- Hover groups: hovering/focusing [data-key] in one container highlights
+  //      every [data-key] match across all containers of the same group
+  //      (territory map legend ↔ map, market cards ↔ world map). ----
+  (function () {
+    var groups = {};
+    Array.prototype.forEach.call(document.querySelectorAll("[data-hover-group]"), function (box) {
+      var g = box.getAttribute("data-hover-group"); (groups[g] = groups[g] || []).push(box);
+    });
+    Object.keys(groups).forEach(function (g) {
+      var boxes = groups[g];
+      var items = [];
+      boxes.forEach(function (b) { items = items.concat(Array.prototype.slice.call(b.querySelectorAll("[data-key]"))); });
+      function set(key, also) {
+        var keys = key ? [key].concat((also || "").split(" ").filter(Boolean)) : [];
+        var all = keys.indexOf("*") !== -1;
+        boxes.forEach(function (b) { b.classList.toggle("is-dim", !!key); });
+        items.forEach(function (el) { el.classList.toggle("is-on", !!key && (all || keys.indexOf(el.getAttribute("data-key")) !== -1)); });
+      }
+      items.forEach(function (el) {
+        var key = el.getAttribute("data-key"); if (!key) return;
+        var also = el.getAttribute("data-also") || "";
+        el.addEventListener("pointerenter", function () { set(key, also); });
+        el.addEventListener("focusin", function () { set(key, also); });
+        el.addEventListener("pointerleave", function () { set(null); });
+        el.addEventListener("focusout", function () { set(null); });
+      });
+    });
+  })();
+
   // ---- Scroll reveal ----
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var revealables = Array.prototype.slice.call(document.querySelectorAll("[data-reveal]"));

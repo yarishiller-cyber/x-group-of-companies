@@ -108,7 +108,7 @@ export const milestones = [
   { year: "2009", title: "New installations", body: "New Garage Doors Vancouver launches as a new-door and opener specialist across the Lower Mainland." },
   { year: "2021", title: "Beyond garage doors", body: "Hydraulic Hero extends the operating model into industrial field services — 24/7 mobile hydraulic repair across Greater Vancouver." },
   { year: "2022–24", title: "A family of local brands", body: "Kitsilano, Pitt Meadows, Maple Ridge, West Vancouver, YVR Garage Door Springs and the transparency-first trio (Probably Fine, Good Enough, Sketchy) launch on shared infrastructure." },
-  { year: "2025", title: "A technology capability", body: "Allegro X AI joins as the Group's technology and applied-AI affiliate, based in Montréal." },
+  { year: "2025", title: "A technology capability", body: "Allegro X AI becomes the Group's technology company, based in Montréal." },
   { year: "2026", title: "X Group", body: "The operating group is formalized as X Group — centralizing finance, procurement, people, technology and strategy — and begins an exploratory international market-development program." },
 ];
 
@@ -172,9 +172,9 @@ export const faqs = [
   { q: "What is X Group?",
     a: "X Group is a Canadian operating holding company, headquartered in Vancouver, British Columbia. It builds, acquires and supports businesses across essential services, industrial field services and technology, and centralizes the functions that benefit from scale — finance, procurement, people, technology and strategy — while its operating companies stay close to their customers and local markets." },
   { q: "What companies does X Group own?",
-    a: "X Group's portfolio spans industrial field services (Hydraulic Hero), a family of essential home-services garage-door brands across Greater Vancouver (including Steveston Garage Doors, YVR Garage Door Springs, West Vancouver, Kitsilano, Pitt Meadows and Maple Ridge among others), and a technology affiliate (Allegro X AI in Montréal). Each company's relationship to the Group is labelled precisely on the Companies page." },
+    a: "X Group's portfolio spans industrial field services (Hydraulic Hero), a family of essential home-services garage-door brands across Greater Vancouver (including Steveston Garage Doors, YVR Garage Door Springs, West Vancouver, Kitsilano, Pitt Meadows and Maple Ridge among others), and its technology company (Allegro X AI, Montréal and Vancouver). Each company's relationship to the Group is labelled precisely on the Companies page." },
   { q: "Where is X Group based?",
-    a: "X Group is headquartered in Vancouver, British Columbia, Canada. Its operating companies serve communities across Greater Vancouver and the Lower Mainland, and its technology affiliate operates from Montréal, Québec." },
+    a: "X Group is headquartered in Vancouver, British Columbia, Canada. Its operating companies serve communities across Greater Vancouver and the Lower Mainland, and its technology company, Allegro X AI, operates from Montréal and Vancouver." },
   { q: "Is X Group a private-equity firm or a fund?",
     a: "No. X Group is an operator-led holding company that invests its own capital and operating expertise. It is not a private-equity firm, investment fund or institutional investor, and it has no fixed exit timeline — it intends to own the businesses it builds and acquires for the long term." },
   { q: "Is X Group acquiring businesses?",
@@ -182,7 +182,7 @@ export const faqs = [
   { q: "What is X Group's international plan?",
     a: "X Group is conducting an exploratory evaluation of selected international markets — currently in Central Asia and the Caucasus — for shared services, technology and AI operations, operating partnerships and potential acquisitions. No destination has been selected, and the Group engages investment-promotion agencies and Canada's Trade Commissioner Service as part of genuine, compliant diligence." },
   { q: "How do the local brands relate to X Group?",
-    a: "Each local brand keeps its own name, team, phone number and community relationships. X Group provides the shared infrastructure behind them — finance, procurement, people, technology, dispatch and strategy. Relationship labels (group operating company, operating brand, technology affiliate) are stated precisely for each business." },
+    a: "Each local brand keeps its own name, team, phone number and community relationships. X Group provides the shared infrastructure behind them — finance, procurement, people, technology, dispatch and strategy. Relationship labels (group operating company, operating brand, technology company) are stated precisely for each business." },
   { q: "How can I contact X Group?",
     a: "X Group publishes direct lines for each purpose: general inquiries, business owners and acquisitions, international and government relations, suppliers, careers and media. See the Contact page for the right address for your inquiry." },
 ];
